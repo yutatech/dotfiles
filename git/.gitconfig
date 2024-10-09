@@ -1,0 +1,11 @@
+[user]
+	name = Yuta Fujiyama
+	email = yuta.technology@gmail.com
+[core]
+	ui = auto
+	quotepath = false
+	editor = vim
+	excludesfile = ~/.gitignore_global
+[init]
+	defaultBranch = main
+

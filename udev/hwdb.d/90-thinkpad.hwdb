@@ -1,0 +1,3 @@
+evdev:atkbd:*
+ KEYBOARD_KEY_c9=reserved // PgUp
+ KEYBOARD_KEY_d1=reserved // PgDn

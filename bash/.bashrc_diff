@@ -1,0 +1,1 @@
+bind 'set completion-ignore-case on' # tab補完で大文字小文字を区別しない

@@ -1,0 +1,5 @@
+partial modifier_keys
+xkb_symbols "swapkeys" {
+  key <PGUP> { [ NoSymbol, NoSymbol ] };
+  key <PGDN> { [ NoSymbol, NoSymbol ] };
+};

@@ -2,5 +2,6 @@
     "files.autoSave": "afterDelay",
     "window.titleBarStyle": "custom",
     "window.customMenuBarAltFocus": false,
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "editor.renderWhitespace": "all"
 }

@@ -16,4 +16,4 @@ else
   exit 1
 fi
 cp $SCRIPT_DIR/git/.gitconfig ~/
-cp $SCRIPT_DIR/git/.gitignore_global ~/
+cp $SCRIPT_DIR/git/.gitignore_grobal ~/

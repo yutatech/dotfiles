@@ -6,8 +6,9 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # Ubuntuの場合
   echo "Setting up keyboard on Ubuntu..."
 
-  sudo apt install fcitx5-mozc
+  sudo apt install fcitx5-mozc -y
   im-config -n fcitx5
+  mkdir -p ~/.config/fcitx5/
   cp $SCRIPT_DIR/fcitx5/config ~/.config/fcitx5/
 
   # cp -r ./xkb ~/.xkb

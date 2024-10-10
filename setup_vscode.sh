@@ -28,7 +28,8 @@ else
   exit 1
 fi
 
-cp $SCRIPT_DIR/vscode/settings.json ~/.config/Code/User/settings.
+mkdir -p ~/.config/Code/User
+cp $SCRIPT_DIR/vscode/settings.json ~/.config/Code/User/settings.json
 
 
 # extensionのインストール

@@ -11,8 +11,3 @@ else
   echo "Unsupported OS. This script supports Ubuntu only."
   exit 1
 fi
-
-mkdir -p ~/.ssh
-cp $SCRIPT_DIR/ssh/config ~/.ssh/
-ssh-keygen -f ~/.ssh/github -N ""
-cat ~/.ssh/github.pub

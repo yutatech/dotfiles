@@ -4,12 +4,18 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # macOSの場合
-  echo "Seeting up git on macOS..."
+  echo "Setting up git on macOS..."
 
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # Ubuntuの場合
   echo "Installing git on Ubuntu..."
   sudo apt install git -y
+  curl -o ~/.git-completion.sh \
+    https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+  curl -o ~/.git-prompt.sh \
+    https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
+
+  cat $SCRIPT_DIR/git/.bashrc_diff >> ~/.bashrc
 
 else
   echo "Unsupported OS. This script supports macOS and Ubuntu only."

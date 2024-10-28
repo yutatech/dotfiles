@@ -45,6 +45,12 @@ if [[ "$1" == "-e" ]]; then
   code --install-extension bierner.markdown-mermaid
   code --install-extension ms-python.python
   code --install-extension ms-vscode.makefile-tools
+  code --install-extension ms-python.black-formatter
+  code --install-extension oderwat.indent-rainbow
+  code --install-extension ms-python.vscode-pylance
+  code --install-extension visualstudioexptteam.vscodeintellicode
+  code --install-extension kevinrose.vsc-python-indent
+  code --install-extension njpwerner.autodocstring
 
 else
     echo "If you want to install extensions, please rerun the script with the -e option."

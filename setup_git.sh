@@ -11,7 +11,10 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   echo "Installing git on Ubuntu..."
   sudo apt install git -y
 
-  cat $SCRIPT_DIR/git/.bashrc_diff >> ~/.bashrc
+  cp $SCRIPT_DIR/git/.git.bash ~/
+
+  source $SCRIPT_DIR/add_line_to_bashrc.sh
+  add_line_to_bashrc "source ~/.git.bash"
 
   curl -o ~/.git-completion.sh \  
     https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash

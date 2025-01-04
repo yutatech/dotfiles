@@ -37,7 +37,6 @@ cp $SCRIPT_DIR/tmux/.tmux.conf ~/
 cp $SCRIPT_DIR/tmux/.tmux.bash ~/
 
 source $SCRIPT_DIR/add_line_to_bashrc.sh
-
 add_line_to_bashrc "source ~/.tmux.bash"
 
 # プラグインのインストール

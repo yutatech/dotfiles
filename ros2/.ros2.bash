@@ -1,4 +1,3 @@
-
 # ROS 2 configuration
 source /opt/ros/humble/setup.bash
 export RCUTILS_COLORIZED_OUTPUT=1

@@ -10,16 +10,18 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # Ubuntuの場合
   echo "Installing git on Ubuntu..."
   sudo apt install git -y
-  curl -o ~/.git-completion.sh \
+
+  cat $SCRIPT_DIR/git/.bashrc_diff >> ~/.bashrc
+
+  curl -o ~/.git-completion.sh \  
     https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
   curl -o ~/.git-prompt.sh \
     https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
-
-  cat $SCRIPT_DIR/git/.bashrc_diff >> ~/.bashrc
 
 else
   echo "Unsupported OS. This script supports macOS and Ubuntu only."
   exit 1
 fi
+
 cp $SCRIPT_DIR/git/.gitconfig ~/
 cp $SCRIPT_DIR/git/.gitignore_grobal ~/

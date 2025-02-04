@@ -1,0 +1,6 @@
+[submodule "git/git"]
+    path = git/git
+    url = https://github.com/git/git
+    # shallow = true
+    # fetchRecurseSubmodules = on-demand
+    # filter = blob:none

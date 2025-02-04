@@ -1,13 +1,12 @@
 # 引数に渡したファイル、環境変数、シンボリックリンクが存在することを確認
 exists() {
-  files=$@
+  local files=$@
   if [ -n "${ZSH_VERSION}" ]; then
     files=(${=files})
   fi
 
   for file in $files; do
     if [ ! -e "$file" ]; then
-      echo "Not exists: $file"
       return 1
     fi
   done
@@ -15,7 +14,7 @@ exists() {
 }
 
 source_all() {
-  files=$@
+  local files=$@
   if [ -n "${ZSH_VERSION}" ]; then
     files=(${=files})
   fi
@@ -44,4 +43,25 @@ is_configure_completed() {
   fi
 
   return $is_completed
+}
+
+check_and_install_commands() {
+  local commands=$@
+  if [ -n "${ZSH_VERSION}" ]; then
+    commands=(${=commands})
+  fi
+
+  for command in $commands; do
+    if ! command -v $command > /dev/null 2>&1; then
+      echo "Installing $command..."
+      if [[ "$OSTYPE" == "darwin"* ]]; then
+        brew install $command
+      elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        sudo apt install $command -y
+      else
+        echo "Unsupported OS. This script supports macOS and Ubuntu only."
+        return 1
+      fi
+    fi
+  done
 }

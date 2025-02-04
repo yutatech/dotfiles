@@ -9,5 +9,5 @@
 [init]
 	defaultBranch = main
 [push]
-        autoSetupRemote = true
-        default = current
+	autoSetupRemote = true
+	default = current

@@ -1,0 +1,3 @@
+unset exists
+unset source_all
+unset is_configure_completed

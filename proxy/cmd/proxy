@@ -3,6 +3,8 @@
 import argparse
 import subprocess
 import argcomplete
+import re
+import os
 
 proxy_port = subprocess.run(
     "echo $PROXY_PORT", shell=True, capture_output=True, text=True
@@ -10,8 +12,9 @@ proxy_port = subprocess.run(
 proxy_server = subprocess.run(
     "echo $PROXY_SERVER", shell=True, capture_output=True, text=True
 ).stdout.strip()
+ssh_exec = "autossh"
 
-command = f"ssh -fN -D {proxy_port} {proxy_server}"
+command = f"{ssh_exec} -M 0 -f -N -D {proxy_port} {proxy_server} -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
 
 
 def _check():
@@ -34,7 +37,7 @@ def _check():
 
 def _get_status():
     result = subprocess.run(
-        f'ps -x | grep "{command}" | grep -v grep',
+        f"ps -x | grep {ssh_exec} | grep {proxy_port} | grep {proxy_server} | grep -v grep",
         shell=True,
         capture_output=True,
         text=True,
@@ -70,14 +73,35 @@ def stop(args):
 
     if _get_status():
         result = subprocess.run(
-            f'pkill -f "{command}"', shell=True, capture_output=True, text=True
+            f"ps -x | grep {ssh_exec} | grep {proxy_port} | grep {proxy_server} | grep -v grep",
+            shell=True,
+            capture_output=True,
+            text=True,
         )
-        if result.returncode != 0:
+        if not result.stdout:
+            print("\033[31mError: Failed to find service.\033[0m")
+            return False
+        elif result.returncode != 0:
             print("\033[31mError: Failed to stop service.\033[0m")
             print(result.stderr)
             return False
         else:
+            # PID を抽出 (PID は最初の数字列)
+            pid = int(re.split(r"\s+", result.stdout.strip())[0])
+
+            try:
+                os.kill(pid, 9)
+            except ProcessLookupError:
+                print(f"\033[31mProcess {pid} not found\033[0m")
+                return False
+            except PermissionError:
+                print(f"\033[31mPermission denied to kill {pid}\033[0m")
+                return False
+            except Exception as e:
+                print(f"\033[31mFailed to kill {pid}: {e}\033[0m")
+                return False
             print("Service stopped successfully.")
+
     else:
         print("Service is not running.")
 

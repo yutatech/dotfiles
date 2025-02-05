@@ -1,0 +1,4 @@
+unset exists
+unset source_all
+unset is_configure_completed
+unset check_and_install_commands

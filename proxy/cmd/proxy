@@ -1,0 +1,164 @@
+#!/usr/bin/env python3
+
+import argparse
+import subprocess
+import argcomplete
+import re
+import os
+
+proxy_port = subprocess.run(
+    "echo $PROXY_PORT", shell=True, capture_output=True, text=True
+).stdout.strip()
+proxy_server = subprocess.run(
+    "echo $PROXY_SERVER", shell=True, capture_output=True, text=True
+).stdout.strip()
+ssh_exec = "autossh"
+
+command = f"{ssh_exec} -M 0 -f -N -D {proxy_port} {proxy_server} -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
+
+
+def _check():
+    return_code = True
+    if proxy_server == "":
+        print(
+            "\033[31mError: PROXY_SERVER is not configured. Please set an environment variable as follows\033[0m"
+        )
+        print("  export PROXY_SERVER=xxx.com")
+        return_code = False
+    if proxy_port == "":
+        print(
+            "\033[31mError: PROXY_PORT is not configured. Please set an environment variable as follows\033[0m"
+        )
+        print("  export PROXY_PORT=1080")
+        return_code = False
+
+    return return_code
+
+
+def _get_status():
+    result = subprocess.run(
+        f"ps -x | grep {ssh_exec} | grep {proxy_port} | grep {proxy_server} | grep -v grep",
+        shell=True,
+        capture_output=True,
+        text=True,
+    )
+    if result.stdout:
+        return True
+    else:
+        return False
+
+
+def start(args):
+    if not _check():
+        return False
+
+    if _get_status():
+        print("Service is already running.")
+    else:
+        print("Starting service...")
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        if result.returncode != 0:
+            print("\033[31mError: Failed to start service.\033[0m")
+            print(result.stderr)
+            return False
+        else:
+            print("Service started successfully.")
+
+    return True
+
+
+def stop(args):
+    if not _check():
+        return False
+
+    if _get_status():
+        result = subprocess.run(
+            f"ps -x | grep {ssh_exec} | grep {proxy_port} | grep {proxy_server} | grep -v grep",
+            shell=True,
+            capture_output=True,
+            text=True,
+        )
+        if not result.stdout:
+            print("\033[31mError: Failed to find service.\033[0m")
+            return False
+        elif result.returncode != 0:
+            print("\033[31mError: Failed to stop service.\033[0m")
+            print(result.stderr)
+            return False
+        else:
+            # PID を抽出 (PID は最初の数字列)
+            pid = int(re.split(r"\s+", result.stdout.strip())[0])
+
+            try:
+                os.kill(pid, 9)
+            except ProcessLookupError:
+                print(f"\033[31mProcess {pid} not found\033[0m")
+                return False
+            except PermissionError:
+                print(f"\033[31mPermission denied to kill {pid}\033[0m")
+                return False
+            except Exception as e:
+                print(f"\033[31mFailed to kill {pid}: {e}\033[0m")
+                return False
+            print("Service stopped successfully.")
+
+    else:
+        print("Service is not running.")
+
+    return True
+
+
+def status(args):
+    if not _check():
+        return False
+
+    if _get_status():
+        print("Service is running.")
+    else:
+        print("Service is not running.")
+
+    return True
+
+
+def restart(args):
+    if not _check():
+        return False
+
+    if not stop([]):
+        return False
+    if not start([]):
+        return False
+
+    return True
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Service Control CLI")
+    subparsers = parser.add_subparsers(dest="command")
+
+    subparsers.add_parser("start", help="Start the service").set_defaults(func=start)
+    subparsers.add_parser("stop", help="Stop the service").set_defaults(func=stop)
+    subparsers.add_parser("status", help="Check service status").set_defaults(
+        func=status
+    )
+    subparsers.add_parser("restart", help="Restart the service").set_defaults(
+        func=restart
+    )
+
+    # `argcomplete` を補完エンジンとして有効化
+    argcomplete.autocomplete(parser)
+
+    args = parser.parse_args()
+
+    if hasattr(args, "func"):
+        result = args.func(args)
+        if result:
+            exit(0)
+        else:
+            exit(-1)
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()

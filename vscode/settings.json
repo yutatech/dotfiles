@@ -2,9 +2,12 @@
     "files.autoSave": "afterDelay",
     "window.titleBarStyle": "custom",
     "window.customMenuBarAltFocus": false,
+    "window.zoomLevel": -1,
+    "remote.SSH.useLocalServer": true,
     "editor.renderWhitespace": "all",
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
+    "cmake.configureOnOpen": true,
     "[c]": {
         "editor.tabSize": 2,
         "editor.insertSpaces": true
@@ -15,7 +18,8 @@
     },
     "[python]": {
         "editor.tabSize": 4,
-        "editor.insertSpaces": true
+        "editor.insertSpaces": true,
+        "editor.defaultFormatter": "ms-python.black-formatter"
     },
     "[makefile]": {
         "editor.tabSize": 4,

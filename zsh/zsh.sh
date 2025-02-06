@@ -23,6 +23,7 @@ fi
 
 if [ -n "${ZSH_VERSION}" ]; then
   source $SCRIPT_DIR/source/zsh_env.zsh
+  source $SCRIPT_DIR/completion/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
 source $SCRIPT_DIR/../setup_utils/unset_utils.sh

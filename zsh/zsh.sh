@@ -7,6 +7,7 @@ SOURCE_FILES=""
 
 CHECK_FILES="
     $SCRIPT_DIR/completion/zsh-autosuggestions/zsh-autosuggestions.zsh
+    $SCRIPT_DIR/completion/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 "
 
 COMMAND="zsh"
@@ -24,6 +25,7 @@ fi
 if [ -n "${ZSH_VERSION}" ]; then
   source $SCRIPT_DIR/source/zsh_env.zsh
   source $SCRIPT_DIR/completion/zsh-autosuggestions/zsh-autosuggestions.zsh
+  source $SCRIPT_DIR/completion/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 source $SCRIPT_DIR/../setup_utils/unset_utils.sh

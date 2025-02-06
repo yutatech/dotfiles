@@ -7,29 +7,29 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   echo "Installing VSCode on macOS..."
   
   # VSCodeをHomebrew経由でインストール
-  if command -v brew &> /dev/null; then
-    echo "Homebrew is installed. Installing VSCode..."
-    brew install --cask visual-studio-code
-  
-    sudo ln -s /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
-  else
-    echo "Homebrew is not installed. Please install Homebrew first."
-    echo "Visit https://brew.sh for installation instructions."
-    exit 1
-  fi
+  brew install --cask visual-studio-code
+
+  sudo ln -s /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
+
+  mkdir -p ~/Library/Application\ Support/Code/User
+  rm -f ~/Library/Application\ Support/Code/User/settings.json
+  ln -s $SCRIPT_DIR/vscode/settings.json ~/Library/Application\ Support/Code/User/settings.json
+
 
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # Ubuntuの場合
   echo "Installing VSCode on Ubuntu..."
   sudo snap install --classic code
 
+  mkdir -p ~/.config/Code/User
+  rm -f ~/.config/Code/User/settings.json
+  ln -s $SCRIPT_DIR/vscode/settings.json ~/.config/Code/User/settings.json
+
 else
   echo "Unsupported OS. This script supports macOS and Ubuntu only."
   exit 1
 fi
 
-mkdir -p ~/.config/Code/User
-cp $SCRIPT_DIR/vscode/settings.json ~/.config/Code/User/settings.json
 
 
 # extensionのインストール

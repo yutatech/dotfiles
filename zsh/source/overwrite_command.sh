@@ -6,5 +6,7 @@ zsh() {
     $SCRIPT_DIR/../scripts/setup_zsh.sh
     unset -f zsh 2>/dev/null
     source $SCRIPT_DIR/../zsh.sh
+
+    chsh -s $(which zsh)
   fi
 }

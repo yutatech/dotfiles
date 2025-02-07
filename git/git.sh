@@ -5,7 +5,9 @@ source $SCRIPT_DIR/../setup_utils/utils.sh
 
 SOURCE_FILES=""
 
-CHECK_FILES="
+CHECK_FILES=""
+
+SYMLINKS="
     $HOME/.gitconfig
     $HOME/.gitignore_global
 "
@@ -19,9 +21,9 @@ if [ -n "${BASH_VERSION}" ]; then
     "
 fi
 
-COMMAND="git"
+COMMANDS="git"
 
-is_configure_completed "$SOURCE_FILES" "$CHECK_FILES" "$COMMAND"
+is_configure_completed "$SOURCE_FILES $CHECK_FILES" "$SYMLINKS" "$COMMANDS"
 CONFIG_COMPETED=$?
 
 if [ $CONFIG_COMPETED -eq 1 ]; then

@@ -1,12 +1,33 @@
 # 引数に渡したファイル、環境変数、シンボリックリンクが存在することを確認
-exists() {
-  local files=$@
-  if [ -n "${ZSH_VERSION}" ]; then
-    files=(${=files})
-  fi
+file_exists() {
+  local files=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
 
   for file in $files; do
     if [ ! -e "$file" ]; then
+      echo "$file"
+      return 1
+    fi
+  done
+  return 0
+}
+
+symlink_exists() {
+  local symlinks=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+
+  for symlink in $symlinks; do
+    if [ ! -L "$symlink" ]; then
+      echo "$symlink"
+      return 1
+    fi
+  done
+  return 0
+}
+
+command_exists() {
+  local commands=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+
+  for command in $commands; do
+    if ! command -v $command > /dev/null 2>&1; then
       return 1
     fi
   done
@@ -14,10 +35,7 @@ exists() {
 }
 
 source_all() {
-  local files=$@
-  if [ -n "${ZSH_VERSION}" ]; then
-    files=(${=files})
-  fi
+  local files=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
 
   for file in $files; do
     source $file
@@ -25,42 +43,39 @@ source_all() {
 }
 
 is_configure_completed() {
-  local source_files=$1
-  local check_files=$2
-  local command=$3
+  local check_files=$1
+  local symlinks=$2
+  local commands=$3
   local is_completed=0
 
-  if ! exists "$source_files" ; then
+  if ! file_exists "$check_files"; then
     is_completed=1
+    echo "file"
   fi
 
-  if ! exists "$check_files"; then
+  if ! symlink_exists "$symlinks"; then
     is_completed=1
+    echo "symlink"
   fi
 
-  if ! command -v $command > /dev/null 2>&1; then
+  if ! command_exists "$commands"; then
     is_completed=1
+    echo "command"
   fi
 
   return $is_completed
 }
 
 check_and_install_commands() {
-  local commands=$@
-  if [ -n "${ZSH_VERSION}" ]; then
-    commands=(${=commands})
-  fi
+  local commands=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
 
   for command in $commands; do
     if ! command -v $command > /dev/null 2>&1; then
       echo "Installing $command..."
       if [[ "$OSTYPE" == "darwin"* ]]; then
         brew install $command
-      elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        sudo apt install $command -y
       else
-        echo "Unsupported OS. This script supports macOS and Ubuntu only."
-        return 1
+        sudo apt install $command -y
       fi
     fi
   done

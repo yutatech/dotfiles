@@ -3,38 +3,34 @@
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  # macOSの場合
-  echo "Installing VSCode on macOS..."
-  
-  # VSCodeをHomebrew経由でインストール
-  if command -v brew &> /dev/null; then
-    echo "Homebrew is installed. Installing VSCode..."
+  if ! command -v code &> /dev/null; then
     brew install --cask visual-studio-code
-  
     sudo ln -s /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
-  else
-    echo "Homebrew is not installed. Please install Homebrew first."
-    echo "Visit https://brew.sh for installation instructions."
-    exit 1
-  fi
+  fi    
+
+  mkdir -p ~/Library/Application\ Support/Code/User
+  ln -sf $SCRIPT_DIR/vscode/settings.json ~/Library/Application\ Support/Code/User/settings.json
 
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  # Ubuntuの場合
-  echo "Installing VSCode on Ubuntu..."
-  sudo snap install --classic code
+  if ! command -v code &> /dev/null; then
+    sudo snap install --classic code
+  fi
+
+  mkdir -p ~/.config/Code/User
+  ln -sf $SCRIPT_DIR/vscode/settings.json ~/.config/Code/User/settings.json
 
 else
   echo "Unsupported OS. This script supports macOS and Ubuntu only."
   exit 1
 fi
 
-mkdir -p ~/.config/Code/User
-cp $SCRIPT_DIR/vscode/settings.json ~/.config/Code/User/settings.json
 
 
 # extensionのインストール
-if [[ "$1" == "-e" ]]; then
-  echo "The -e option was provided."
+
+echo "Would you like to install vscode extensions now? (y/n)"
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]]; then
   echo "Installing extensions..."
 
   code --install-extension ms-vscode.cpptools-extension-pack
@@ -51,7 +47,4 @@ if [[ "$1" == "-e" ]]; then
   code --install-extension visualstudioexptteam.vscodeintellicode
   code --install-extension kevinrose.vsc-python-indent
   code --install-extension njpwerner.autodocstring
-
-else
-    echo "If you want to install extensions, please rerun the script with the -e option."
 fi

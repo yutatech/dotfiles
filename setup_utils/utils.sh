@@ -2,7 +2,7 @@
 file_exists() {
   local files=$@
 
-  if -n "${ZSH_VERSION}"; then
+  if [ -n "${ZSH_VERSION}" ]; then
     files=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
   fi
 
@@ -17,7 +17,7 @@ file_exists() {
 symlink_exists() {
   local symlinks=$@
 
-  if -n "${ZSH_VERSION}"; then
+  if [ -n "${ZSH_VERSION}" ]; then
     symlinks=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
   fi
 
@@ -32,7 +32,7 @@ symlink_exists() {
 command_exists() {
   local commands=$@
 
-  if -n "${ZSH_VERSION}"; then
+  if [ -n "${ZSH_VERSION}" ]; then
     commands=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
   fi
 
@@ -47,7 +47,7 @@ command_exists() {
 source_all() {
   local files=$@
 
-  if -n "${ZSH_VERSION}"; then
+  if [ -n "${ZSH_VERSION}" ]; then
     files=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
   fi
 
@@ -80,7 +80,7 @@ is_configure_completed() {
 check_and_install_commands() {
   local commands=$@
 
-  if -n "${ZSH_VERSION}"; then
+  if [ -n "${ZSH_VERSION}" ]; then
     commands=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
   fi
 

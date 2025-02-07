@@ -5,7 +5,9 @@ source $SCRIPT_DIR/../setup_utils/utils.sh
 
 SOURCE_FILES=""
 
-CHECK_FILES="
+CHECK_FILES=""
+
+SYMLINKS="
     $HOME/.tmux.conf
 "
 
@@ -17,9 +19,9 @@ if [ -n "${BASH_VERSION}" ]; then
     "
 fi
 
-COMMAND="tmux"
+COMMANDS="tmux"
 
-is_configure_completed "$SOURCE_FILES" "$CHECK_FILES" "$COMMAND"
+is_configure_completed "$SOURCE_FILES $CHECK_FILES" "$SYMLINKS" "$COMMANDS"
 CONFIG_COMPETED=$?
 
 source $SCRIPT_DIR/source/tpm_utils.sh

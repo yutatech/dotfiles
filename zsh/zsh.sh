@@ -10,9 +10,11 @@ CHECK_FILES="
     $SCRIPT_DIR/completion/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 "
 
+SYMLLINKS=""
+
 COMMAND="zsh"
 
-is_configure_completed "$SOURCE_FILES" "$CHECK_FILES" "$COMMAND"
+is_configure_completed "$SOURCE_FILES $CHECK_FILES" "$SYMLINKS" "$COMMAND"
 CONFIG_COMPETED=$?
 
 if [ $CONFIG_COMPETED -eq 1 ]; then

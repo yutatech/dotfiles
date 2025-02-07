@@ -3,27 +3,21 @@
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  # macOSの場合
-  echo "Installing VSCode on macOS..."
-  
-  # VSCodeをHomebrew経由でインストール
-  brew install --cask visual-studio-code
-
-  sudo ln -s /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
+  if ! command -v code &> /dev/null; then
+    brew install --cask visual-studio-code
+    sudo ln -s /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
+  fi    
 
   mkdir -p ~/Library/Application\ Support/Code/User
-  rm -f ~/Library/Application\ Support/Code/User/settings.json
-  ln -s $SCRIPT_DIR/vscode/settings.json ~/Library/Application\ Support/Code/User/settings.json
-
+  ln -sf $SCRIPT_DIR/vscode/settings.json ~/Library/Application\ Support/Code/User/settings.json
 
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  # Ubuntuの場合
-  echo "Installing VSCode on Ubuntu..."
-  sudo snap install --classic code
+  if ! command -v code &> /dev/null; then
+    sudo snap install --classic code
+  fi
 
   mkdir -p ~/.config/Code/User
-  rm -f ~/.config/Code/User/settings.json
-  ln -s $SCRIPT_DIR/vscode/settings.json ~/.config/Code/User/settings.json
+  ln -sf $SCRIPT_DIR/vscode/settings.json ~/.config/Code/User/settings.json
 
 else
   echo "Unsupported OS. This script supports macOS and Ubuntu only."
@@ -33,8 +27,10 @@ fi
 
 
 # extensionのインストール
-if [[ "$1" == "-e" ]]; then
-  echo "The -e option was provided."
+
+echo "Would you like to install vscode extensions now? (y/n)"
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]]; then
   echo "Installing extensions..."
 
   code --install-extension ms-vscode.cpptools-extension-pack
@@ -51,7 +47,4 @@ if [[ "$1" == "-e" ]]; then
   code --install-extension visualstudioexptteam.vscodeintellicode
   code --install-extension kevinrose.vsc-python-indent
   code --install-extension njpwerner.autodocstring
-
-else
-    echo "If you want to install extensions, please rerun the script with the -e option."
 fi

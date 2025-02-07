@@ -4,7 +4,6 @@ file_exists() {
 
   for file in $files; do
     if [ ! -e "$file" ]; then
-      echo "$file"
       return 1
     fi
   done
@@ -16,7 +15,6 @@ symlink_exists() {
 
   for symlink in $symlinks; do
     if [ ! -L "$symlink" ]; then
-      echo "$symlink"
       return 1
     fi
   done
@@ -50,17 +48,14 @@ is_configure_completed() {
 
   if ! file_exists "$check_files"; then
     is_completed=1
-    echo "file"
   fi
 
   if ! symlink_exists "$symlinks"; then
     is_completed=1
-    echo "symlink"
   fi
 
   if ! command_exists "$commands"; then
     is_completed=1
-    echo "command"
   fi
 
   return $is_completed

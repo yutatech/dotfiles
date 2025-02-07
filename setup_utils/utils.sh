@@ -1,6 +1,10 @@
 # 引数に渡したファイル、環境変数、シンボリックリンクが存在することを確認
 file_exists() {
-  local files=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  local files=$@
+
+  if -n "${ZSH_VERSION}"; then
+    files=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  fi
 
   for file in $files; do
     if [ ! -e "$file" ]; then
@@ -11,7 +15,11 @@ file_exists() {
 }
 
 symlink_exists() {
-  local symlinks=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  local symlinks=$@
+
+  if -n "${ZSH_VERSION}"; then
+    symlinks=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  fi
 
   for symlink in $symlinks; do
     if [ ! -L "$symlink" ]; then
@@ -22,7 +30,11 @@ symlink_exists() {
 }
 
 command_exists() {
-  local commands=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  local commands=$@
+
+  if -n "${ZSH_VERSION}"; then
+    commands=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  fi
 
   for command in $commands; do
     if ! command -v $command > /dev/null 2>&1; then
@@ -33,7 +45,11 @@ command_exists() {
 }
 
 source_all() {
-  local files=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  local files=$@
+
+  if -n "${ZSH_VERSION}"; then
+    files=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  fi
 
   for file in $files; do
     source $file
@@ -62,7 +78,11 @@ is_configure_completed() {
 }
 
 check_and_install_commands() {
-  local commands=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  local commands=$@
+
+  if -n "${ZSH_VERSION}"; then
+    commands=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  fi
 
   for command in $commands; do
     if ! command -v $command > /dev/null 2>&1; then

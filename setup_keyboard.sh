@@ -10,6 +10,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   im-config -n fcitx5
   mkdir -p ~/.config/fcitx5/
   cp $SCRIPT_DIR/fcitx5/config ~/.config/fcitx5/
+  cp $SCRIPT_DIR/fcitx5/fcitx5.desktop ~/.config/autostart/
 
   # cp -r ./xkb ~/.xkb
   # echo "xkbcomp -I$HOME/.xkb ~/.xkb/keymap/kbd $DISPLAY> /dev/null" >> ~/.bashrc

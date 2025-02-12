@@ -8,3 +8,5 @@ git() {
     source $SCRIPT_DIR/../git.sh
   fi
 }
+
+unset PROMPT_COMMAND

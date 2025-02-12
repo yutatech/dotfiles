@@ -1,6 +1,9 @@
 #!/bin/bash
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+REPO_DIR=$(cd $SCRIPT_DIR && git rev-parse --show-toplevel 2>/dev/null)
+
+echo "$REPO_DIR"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   if ! command -v code &> /dev/null; then
@@ -9,7 +12,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   fi    
 
   mkdir -p ~/Library/Application\ Support/Code/User
-  ln -sf $SCRIPT_DIR/vscode/settings.json ~/Library/Application\ Support/Code/User/settings.json
+  ln -sf $REPO_DIR/vscode/settings.json ~/Library/Application\ Support/Code/User/settings.json
 
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   if ! command -v code &> /dev/null; then
@@ -17,7 +20,7 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   fi
 
   mkdir -p ~/.config/Code/User
-  ln -sf $SCRIPT_DIR/vscode/settings.json ~/.config/Code/User/settings.json
+  ln -sf $REPO_DIR/vscode/settings.json ~/.config/Code/User/settings.json
 
 else
   echo "Unsupported OS. This script supports macOS and Ubuntu only."

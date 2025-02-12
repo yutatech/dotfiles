@@ -14,5 +14,5 @@ fi
 # 設定ファイルのコピー
 cp $SCRIPT_DIR/ros2/.ros2.bash ~/
 
-source $SCRIPT_DIR/add_line_to_bashrc.sh
+source $SCRIPT_DIR/setup_utils/add_line_to_bashrc.sh
 add_line_to_bashrc "source ~/.ros2.bash"

@@ -8,7 +8,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
   cp $SCRIPT_DIR/bash/.bash_config.bash ~/
 
-  source $SCRIPT_DIR/add_line_to_bashrc.sh
+  source $SCRIPT_DIR/setup_utils/add_line_to_bashrc.sh
   add_line_to_bashrc "source ~/.bash_config.bash"
 
 else

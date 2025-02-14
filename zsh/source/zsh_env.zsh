@@ -107,3 +107,13 @@ case ${OSTYPE} in
         alias ls='ls -F --color=auto'
         ;;
 esac
+
+
+# 補完機能を有効にする
+autoload -Uz compinit
+compinit
+
+# pip の補完機能を有効にする
+if type pip &>/dev/null; then
+  eval "$(pip completion --zsh)"
+fi

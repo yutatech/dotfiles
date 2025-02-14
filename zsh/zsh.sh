@@ -10,7 +10,7 @@ CHECK_FILES="
     $SCRIPT_DIR/completion/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 "
 
-SYMLLINKS=""
+SYMLINKS=""
 
 COMMAND="zsh"
 

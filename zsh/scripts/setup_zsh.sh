@@ -3,7 +3,7 @@
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SCRIPT_DIR/../../setup_utils/utils.sh
 
-TARGET_DIR=$SCRIPT_DIR/../completion/
+TARGET_DIR=$SCRIPT_DIR/../completion
 mkdir -p $TARGET_DIR
 
 repos=(

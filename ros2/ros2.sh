@@ -22,7 +22,7 @@ CHECK_FILES=""
 SYMLINKS=""
 
 
-COMMANDS="ros2"
+COMMANDS=""
 
 is_configure_completed "$SOURCE_FILES $CHECK_FILES" "$SYMLINKS" "$COMMANDS"
 CONFIG_COMPETED=$?
@@ -33,6 +33,7 @@ if [ $CONFIG_COMPETED -eq 1 ]; then
 else
     source_all "$SOURCE_FILES"
     source $SCRIPT_DIR/source/ros2_env.sh
+    ROS2_CONFIGURATION_COMPLETED=1
 fi
 
 source $SCRIPT_DIR/../setup_utils/unset_utils.sh

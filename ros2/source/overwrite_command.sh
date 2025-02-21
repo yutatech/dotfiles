@@ -8,5 +8,3 @@ ros2() {
     source $SCRIPT_DIR/../ros2.sh
   fi
 }
-
-unset PROMPT_COMMAND

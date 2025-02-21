@@ -5,5 +5,6 @@ source $MY_CONFIGURATION_DIR/bash/bash.sh
 source $MY_CONFIGURATION_DIR/git/git.sh
 source $MY_CONFIGURATION_DIR/tmux/tmux.sh
 source $MY_CONFIGURATION_DIR/vscode/vscode.sh
+source $MY_CONFIGURATION_DIR/ros2/ros2.sh
 
 source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh

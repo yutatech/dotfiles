@@ -3,6 +3,9 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
 source $SCRIPT_DIR/../setup_utils/utils.sh
 
+# 自作サブコマンド
+export PATH="$SCRIPT_DIR/cmd:$PATH"
+
 SOURCE_FILES=""
 
 CHECK_FILES=""
@@ -32,6 +35,7 @@ if [ $CONFIG_COMPETED -eq 1 ]; then
 else
     source_all "$SOURCE_FILES"
     source $SCRIPT_DIR/source/git_env.sh
+    source $SCRIPT_DIR/source/git_completion_add.sh
 fi
 
 source $SCRIPT_DIR/../setup_utils/unset_utils.sh

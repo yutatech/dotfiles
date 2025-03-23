@@ -3,6 +3,9 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
 source $SCRIPT_DIR/../setup_utils/utils.sh
 
+# 自作サブコマンド
+export PATH="$SCRIPT_DIR/cmd:$PATH"
+
 SOURCE_FILES=""
 
 CHECK_FILES=""

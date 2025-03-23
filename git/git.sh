@@ -35,7 +35,6 @@ if [ $CONFIG_COMPETED -eq 1 ]; then
 else
     source_all "$SOURCE_FILES"
     source $SCRIPT_DIR/source/git_env.sh
-    source $SCRIPT_DIR/source/git_completion_add.sh
 fi
 
 source $SCRIPT_DIR/../setup_utils/unset_utils.sh

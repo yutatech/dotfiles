@@ -14,5 +14,5 @@ source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
 autoload -Uz compinit
 compinit
 
-source $MY_CONFIGURATION_DIR/git/source/git_completion_add.sh
+source $MY_CONFIGURATION_DIR/git/git_comp.sh
 source $MY_CONFIGURATION_DIR/ros2/ros2_comp.sh

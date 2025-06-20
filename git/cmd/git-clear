@@ -22,4 +22,10 @@ else
   exit 1
 fi
 
-git branch --merged | grep -v "\*" | xargs git branch -dµ
+DELETE_BRANCH=$(git branch --merged $DEFAULT_BRANCH | grep -v "\*" | grep -v "main")
+
+if [ -z "$DELETE_BRANCH" ]; then
+  echo "No merged local branch"
+else
+  git branch -D $DELETE_BRANCH
+fi

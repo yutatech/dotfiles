@@ -1,12 +1,22 @@
 if [ -n "${ZSH_VERSION}" ]; then
     _git_custom_commands() {
-        _git
+        local context state line
+        declare -A opt_args
 
-        local -a _descriptions _values
-        _descriptions=('clear -- delete all merged branches',
-                       'fixup -- fix up a commit')
-        _values=('clear' 'fixup')
-        compadd -d _descriptions -a _values
+        _arguments -C \
+            '(-): :->command'
+
+        case $state in
+            command)
+            local -a custom_cmds
+            custom_cmds=(
+                'clear:delete all merged branches'
+                'fixup:fix up a commit'
+            )
+            _describe -t command 'git command' custom_cmds
+            ;;
+        esac
+        _git
     }
     compdef _git_custom_commands git
 

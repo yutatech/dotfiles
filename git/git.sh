@@ -15,7 +15,10 @@ SYMLINKS="
     $HOME/.gitignore_global
 "
 
-if [ -n "${BASH_VERSION}" ]; then
+if [ -n "${ZSH_VERSION}" ]; then
+    # zshの補完関数のパスを追加
+    fpath=($SCRIPT_DIR/comp $fpath)
+elif [ -n "${BASH_VERSION}" ]; then
     # bashの場合
     SOURCE_FILES="
         $SOURCE_FILES

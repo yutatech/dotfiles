@@ -1,0 +1,4 @@
+#compdef git-fixup
+#description fix up a commit
+
+__git_recent_commits

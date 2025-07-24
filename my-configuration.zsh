@@ -10,7 +10,6 @@ source $MY_CONFIGURATION_DIR/zsh/zsh.sh
 source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
 
 # 補完機能を有効にする
-# compinitを実行するので、他のcompinitより前に実行すべきものをzsh.shより前に実行する
 autoload -Uz compinit
 compinit
 

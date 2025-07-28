@@ -5,5 +5,6 @@ zsh() {
     local SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
     $SCRIPT_DIR/../scripts/setup_zsh.sh
     source $SCRIPT_DIR/../zsh.sh
+    unset zsh
   fi
 }

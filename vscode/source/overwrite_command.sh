@@ -1,3 +1,6 @@
+if [ -n "$SSH_TTY" ] || [ -n "$VSCODE_IPC_HOOK_CLI" ]; then
+else
+
 code() {
   echo "code configureation is not completed. Would you like to configure it now? (y/n)"
   read answer
@@ -8,3 +11,5 @@ code() {
     source $SCRIPT_DIR/../vscode.sh
   fi
 }
+
+fi

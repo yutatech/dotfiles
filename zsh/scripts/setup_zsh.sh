@@ -18,7 +18,6 @@ done
 
 COMMANDS="zsh"
 check_and_install_commands "$COMMANDS"
-unset -f zsh 2>/dev/null
 
 # $HOME/.zshrc が存在しない場合は、作成
 if [ ! -f "$HOME/.zshrc" ]; then

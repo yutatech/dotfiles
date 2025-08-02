@@ -7,6 +7,7 @@ source $MY_CONFIGURATION_DIR/vscode/vscode.sh
 source $MY_CONFIGURATION_DIR/ros2/ros2.sh
 source $MY_CONFIGURATION_DIR/zsh/zsh.sh
 source $MY_CONFIGURATION_DIR/fcitx5/fcitx5.sh
+source $MY_CONFIGURATION_DIR/vim/vim.sh
 
 source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
 

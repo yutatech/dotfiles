@@ -9,12 +9,7 @@ CHECK_FILES=""
 
 SYMLINKS="$HOME/.vimrc"
 
-COMMANDS=""
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  COMMANDS="vim"
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  COMMANDS="vim vim-gtk"
-fi
+COMMANDS="vim"
 
 is_configure_completed "$SOURCE_FILES $CHECK_FILES" "$SYMLINKS" "$COMMANDS"
 CONFIG_COMPETED=$?

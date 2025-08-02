@@ -5,5 +5,6 @@ set mouse=a " バッファスクロール
 syntax on " シンタックスハイライト on
 set guioptions+=R " 対応する括弧を強調表示
 set list " 制御文字を表示
+set encoding=utf-8
 set listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 set clipboard=unnamedplus

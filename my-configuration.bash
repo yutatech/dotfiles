@@ -11,5 +11,6 @@ source $MY_CONFIGURATION_DIR/ros2/ros2_comp.sh
 source $MY_CONFIGURATION_DIR/fcitx5/fcitx5.sh
 source $MY_CONFIGURATION_DIR/vim/vim.sh
 source $MY_CONFIGURATION_DIR/refind/refind.sh
+source $MY_CONFIGURATION_DIR/chrome/chrome.sh
 
 source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh

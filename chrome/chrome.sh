@@ -3,7 +3,6 @@
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
-    REPO_DIR=$(cd $SCRIPT_DIR && git rev-parse --show-toplevel 2>/dev/null)
     source $REPO_DIR/setup_utils/utils.sh
 
     SOURCE_FILES=""

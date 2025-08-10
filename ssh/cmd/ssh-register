@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ $# -ne 2 ]; then
+  echo "ssh-register <username> <hostname>"
+  echo ""
+  echo "  This command create new ssh key pair and upload public key to remote host"
+  exit 1
+fi
+
+USER_NAME="$1"
+HOST_NAME="$2"
+
+# HOST_NAMEで.より前の部分を抽出
+KEY_NAME=$(echo $HOST_NAME | cut -d. -f1)
+
+ssh-keygen -f ~/.ssh/$KEY_NAME -t rsa -N ""
+ssh-add-config $USER_NAME $HOST_NAME $KEY_NAME
+
+# ssh経由でremote hostの~/.ssh/authorized_keysに公開鍵を追加
+ssh $USER_NAME@$HOST_NAME "cat >> ~/.ssh/authorized_keys" < ~/.ssh/$KEY_NAME.pub

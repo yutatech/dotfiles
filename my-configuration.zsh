@@ -15,8 +15,6 @@ source $MY_CONFIGURATION_DIR/ssh/ssh.sh
 
 source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
 
-echo $fpath
-
 # 補完機能を有効にする
 autoload -Uz compinit
 compinit

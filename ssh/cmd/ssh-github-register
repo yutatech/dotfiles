@@ -1,0 +1,45 @@
+#!/bin/bash
+
+ssh-keygen -f ~/.ssh/github -t rsa -N ""
+
+# GitHubユーザー名
+USER="yutatech"
+# 登録する公開鍵ファイルパス
+KEY_FILE="$HOME/.ssh/github.pub"
+# 登録するキーのタイトル
+TITLE=$(hostname)
+
+# 公開鍵の読み込み（改行を詰める）
+KEY=$(cat "$KEY_FILE" | tr -d '\n')
+
+# SSH接続先判定（SSH_CONNECTION環境変数があればSSHセッション）
+if [[ -n "$SSH_CONNECTION" ]]; then
+  echo "SSH接続先環境を検出しました。"
+  echo "----- SSH Public Key -----"
+  echo "$KEY"
+  echo
+  echo "以下のURLをローカルマシンで開いてSSHキーを登録してください："
+  echo "https://github.com/settings/ssh/new"
+else
+  # ローカル実行時のクリップボードコピー＆ブラウザ起動
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "$KEY" | pbcopy
+    open "https://github.com/settings/ssh/new"
+  elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
+    echo "$KEY" | clip
+    powershell.exe start "https://github.com/settings/ssh/new"
+  elif command -v xclip &>/dev/null; then
+    echo "$KEY" | xclip -selection clipboard
+    xdg-open "https://github.com/settings/ssh/new"
+  elif command -v wl-copy &>/dev/null; then
+    echo "$KEY" | wl-copy
+    xdg-open "https://github.com/settings/ssh/new"
+  else
+    echo "クリップボードにコピーできません。手動で公開鍵をコピーしてください。"
+    echo "----- SSH Public Key -----"
+    echo "$KEY"
+    echo ""
+    echo "GitHubの登録ページ：https://github.com/settings/ssh/new"
+    exit 1
+  fi
+fi

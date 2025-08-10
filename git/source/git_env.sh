@@ -1,5 +1,3 @@
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
-
 # 自作サブコマンド
 export PATH="$REPO_DIR/git/cmd:$PATH"
 

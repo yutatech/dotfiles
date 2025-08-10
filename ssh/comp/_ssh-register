@@ -1,0 +1,3 @@
+#compdef ssh-register
+
+_arguments '*: :_nothing'

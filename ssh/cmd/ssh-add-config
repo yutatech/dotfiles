@@ -1,0 +1,58 @@
+#!/bin/bash
+
+if [ $# -ne 3 ]; then
+  echo "Usage: ssh-add-config <username> <hostname> <key_name>"
+  echo ""
+  echo "  This command adds ssh remote configuration to ~/.ssh/config"
+  exit 1
+fi
+
+USER_NAME="$1"
+HOST_NAME="$2"
+KEY_PATH="$HOME/.ssh/$3"
+SSH_CONFIG="$HOME/.ssh/config"
+
+# バックアップ作成
+cp "$SSH_CONFIG" "${SSH_CONFIG}.bak_$(date +%Y%m%d%H%M%S)" 2>/dev/null
+
+# 指定ホストのセクション抽出用フラグ
+in_host_section=0
+
+# 新しい設定行を作成
+new_host="Host $HOST_NAME"
+new_user="  User $USER_NAME"
+new_identity="  IdentityFile $KEY_PATH"
+
+awk -v host="$HOST_NAME" -v host_line="$new_host" -v user_line="$new_user" -v identity_line="$new_identity" '
+  BEGIN { in_host=0; found_host=0 }
+  /^Host[ \t]+/ {
+    if (in_host == 1) { in_host=0 }
+    if ($2 == host) { in_host=1; found_host=1; print; next }
+  }
+  {
+    if (in_host == 1) {
+      if ($1 == "User") {
+        print user_line
+      } else if ($1 == "IdentityFile")  {
+        print identity_line
+      }
+      else {
+        print
+      }
+    } else {
+      print
+    }
+  }
+  END {
+    # host
+    if (found_host == 0) {
+      print host_line
+      print user_line
+      print identity_line
+    } else 
+  }
+' "$SSH_CONFIG" > "${SSH_CONFIG}.tmp"
+
+mv "${SSH_CONFIG}.tmp" "$SSH_CONFIG"
+
+echo "Updated SSH config for host '$HOST_NAME'. Backup saved as ${SSH_CONFIG}.bak_*"

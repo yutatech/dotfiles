@@ -1,0 +1,3 @@
+#compdef ssh-add-config
+
+_arguments '*: :_nothing'

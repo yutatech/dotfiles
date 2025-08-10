@@ -7,5 +7,3 @@ fcitx5() {
     unset -f fcitx5 2>/dev/null
   fi
 }
-
-unset PROMPT_COMMAND

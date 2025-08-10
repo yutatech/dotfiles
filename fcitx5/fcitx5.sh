@@ -8,7 +8,7 @@ SOURCE_FILES=""
 CHECK_FILES=""
 
 SYMLINKS="
-    $HOME/.config/fcitx5/config
+    $HOME/.config/fcitx5
     $HOME/.config/autostart/fcitx5.desktop
 "
 

@@ -3,9 +3,6 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
 source $SCRIPT_DIR/../setup_utils/utils.sh
 
-# 自作サブコマンド
-export PATH="$SCRIPT_DIR/cmd:$PATH"
-
 SOURCE_FILES=""
 
 CHECK_FILES=""
@@ -15,10 +12,7 @@ SYMLINKS="
     $HOME/.gitignore_global
 "
 
-if [ -n "${ZSH_VERSION}" ]; then
-    # zshの補完関数のパスを追加
-    fpath=($SCRIPT_DIR/comp $fpath)
-elif [ -n "${BASH_VERSION}" ]; then
+if [ -n "${BASH_VERSION}" ]; then
     # bashの場合
     SOURCE_FILES="
         $SOURCE_FILES

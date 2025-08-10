@@ -4,4 +4,8 @@ curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-a
 sudo apt install /tmp/ros2-apt-source.deb
 
 sudo apt update
-sudo apt install -y ros-humble-desktop
+sudo apt install -y \
+        ros-humble-desktop \
+		python3-vcstool \
+		python3-rosdep \
+		python3-colcon-common-extensions

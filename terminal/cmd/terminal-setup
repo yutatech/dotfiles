@@ -9,7 +9,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # 設定ファイルの書き出し方法は以下
   # dconf dump /org/gnome/terminal/ > gnome-terminal-settings.dconf
 
-  dconf load /org/gnome/terminal/ < $SCRIPT_DIR/terminal/gnome-terminal-settings.dconf
+  dconf load /org/gnome/terminal/ < $SCRIPT_DIR/../gnome-terminal-settings.dconf
 
   echo "Terminal setup is done."
 

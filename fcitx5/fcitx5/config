@@ -19,10 +19,10 @@ EnumerateSkipFirst=False
 0=Shift+Super+space
 
 [Hotkey/ActivateKeys]
-0=Alt+Alt_R
+0=Alt+Alt_L
 
 [Hotkey/DeactivateKeys]
-0=Alt+Alt_L
+0=Alt+Alt_R
 
 [Hotkey/PrevPage]
 0=Up

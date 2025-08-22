@@ -1,27 +1,18 @@
 MY_CONFIGURATION_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
-REPO_DIR=$MY_CONFIGURATION_DIR
 
-source $MY_CONFIGURATION_DIR/bash/bash.sh
-source $MY_CONFIGURATION_DIR/git/git.sh
-source $MY_CONFIGURATION_DIR/tmux/tmux.sh
-source $MY_CONFIGURATION_DIR/vscode/vscode.sh
-source $MY_CONFIGURATION_DIR/ros2/ros2.sh
-source $MY_CONFIGURATION_DIR/zsh/zsh.sh
-source $MY_CONFIGURATION_DIR/fcitx5/fcitx5.sh
-source $MY_CONFIGURATION_DIR/vim/vim.sh
-source $MY_CONFIGURATION_DIR/refind/refind.sh
-source $MY_CONFIGURATION_DIR/chrome/chrome.sh
-source $MY_CONFIGURATION_DIR/ssh/ssh.sh
-source $MY_CONFIGURATION_DIR/terminal/terminal.sh
-source $MY_CONFIGURATION_DIR/docker/docker.sh
+source $MY_CONFIGURATION_DIR/setup_utils/add_line_to_zshrc.sh
 
-source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
+DOTFILES_PARENT_DIR=$(cd $MY_CONFIGURATION_DIR/.. && pwd)
 
-# 補完機能を有効にする
-autoload -Uz compinit
-compinit
+# bashrcからmy-configurationが含まれる行を削除
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' '/my-configuration/d' ~/.zshrc
+else
+    sed -i '/my-configuration/d' ~/.zshrc
+fi
 
-source $MY_CONFIGURATION_DIR/git/git_comp.sh
-source $MY_CONFIGURATION_DIR/ros2/ros2_comp.sh
+add_line_to_zshrc "source $DOTFILES_PARENT_DIR/dotfiles/dotfile.zsh"
 
-unset REPO_DIR
+mv $MY_CONFIGURATION_DIR $MY_CONFIGURATION_DIR/../dotfiles
+
+source "$DOTFILES_PARENT_DIR/dotfiles/dotfile.zsh"

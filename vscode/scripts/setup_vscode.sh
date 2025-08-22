@@ -9,7 +9,7 @@ echo "$REPO_DIR"
 if [[ "$OSTYPE" == "darwin"* ]]; then
   if ! command -v code &> /dev/null; then
     brew install --cask visual-studio-code
-    sudo ln -s /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
+    sudo ln -sf /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
   fi    
 
   mkdir -p ~/Library/Application\ Support/Code/User

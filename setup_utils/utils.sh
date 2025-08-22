@@ -22,7 +22,7 @@ symlink_exists() {
   fi
 
   for symlink in $symlinks; do
-    if [ ! -L "$symlink" ]; then
+    if [ ! -L "$symlink" ] || [ ! -e "$(readlink "$symlink")" ]; then
       return 1
     fi
   done

@@ -64,14 +64,17 @@ is_configure_completed() {
 
   if ! file_exists "$check_files"; then
     is_completed=1
+    # echo "Missing files: $check_files"
   fi
 
   if ! symlink_exists "$symlinks"; then
     is_completed=1
+    # echo "Missing symlinks: $symlinks"
   fi
 
   if ! command_exists "$commands"; then
     is_completed=1
+    # echo "Missing commands: $commands"
   fi
 
   return $is_completed

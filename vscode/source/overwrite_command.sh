@@ -1,4 +1,5 @@
 if [ -n "$SSH_TTY" ] || [ -n "$VSCODE_IPC_HOOK_CLI" ]; then
+  :
 else
 
 code() {

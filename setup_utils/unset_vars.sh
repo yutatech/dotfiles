@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 unset SCRIPT_DIR SOURCE_FILES CHECK_FILES COMMAND CONFIG_COMPETED

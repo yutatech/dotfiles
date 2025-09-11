@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 # ファイルに特定の行が含まれていなければ追加する関数

@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 # refind configuration
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then

@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
 
 if [ -n "${BASH_VERSION}" ]; then

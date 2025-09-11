@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 unset exists
 unset source_all
 unset is_configure_completed

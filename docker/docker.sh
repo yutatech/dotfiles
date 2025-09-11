@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 # docker configuration
 source $REPO_DIR/setup_utils/utils.sh
 

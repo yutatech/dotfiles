@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
 if [ $# -ne 3 ]; then
   echo "Usage: ssh-add-config <username> <hostname> <key_name>"

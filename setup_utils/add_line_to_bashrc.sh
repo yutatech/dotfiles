@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # ファイルに特定の行が含まれていなければ追加する関数
 add_line_to_bashrc() {

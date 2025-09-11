@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # macOSの場合

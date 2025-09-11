@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 # ros2 configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
 source $SCRIPT_DIR/../setup_utils/utils.sh

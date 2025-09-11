@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 # terminal configuration
 
 source $REPO_DIR/setup_utils/utils.sh

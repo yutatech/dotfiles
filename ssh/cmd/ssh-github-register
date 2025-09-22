@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
 ssh-keygen -f ~/.ssh/github -t rsa -N ""
 

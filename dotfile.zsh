@@ -3,6 +3,7 @@ REPO_DIR=$MY_CONFIGURATION_DIR
 
 source $MY_CONFIGURATION_DIR/bash/bash.sh
 source $MY_CONFIGURATION_DIR/git/git.sh
+source $MY_CONFIGURATION_DIR/gh/gh.sh
 source $MY_CONFIGURATION_DIR/tmux/tmux.sh
 source $MY_CONFIGURATION_DIR/vscode/vscode.sh
 source $MY_CONFIGURATION_DIR/ros2/ros2.sh

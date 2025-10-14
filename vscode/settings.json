@@ -75,5 +75,14 @@
     "git.confirmSync": false,
     "notebook.output.scrolling": true,
     "C_Cpp.doxygen.generatedStyle": "/**",
-    "githubPullRequests.pullBranch": "never"
+    "githubPullRequests.pullBranch": "never",
+
+    "python.analysis.extraPaths": [
+        "${env:HOME}/Library/Python/3.13/lib/python/site-packages/",
+        "${env:HOME}/Library/Python/3.12/lib/python/site-packages/",
+        "${env:HOME}/Library/Python/3.11/lib/python/site-packages/",
+        "${env:HOME}/Library/Python/3.10/lib/python/site-packages/",
+        "${env:HOME}/Library/Python/3.9/lib/python/site-packages/",
+        "${env:HOME}/Library/Python/3.8/lib/python/site-packages/"
+    ]
 }

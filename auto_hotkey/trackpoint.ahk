@@ -1,44 +1,52 @@
-﻿#MaxHotkeysPerInterval 2000
-#SingleInstance force
+#SingleInstance Force
 
-WheelUp:: hookWheelUp()
-global isWheelUP := false
-hookWheelUp(){
-    send {Wheelup}
+A_HotkeyInterval := 1000
+A_MaxHotkeysPerInterval := 200
+
+global isWheelUp := false
+global isWheelDown := false
+global isWheelLeft := false
+global isWheelRight := false
+
+WheelUp::hookWheelUp()
+WheelDown::hookWheelDown()
+WheelLeft::hookWheelLeft()
+WheelRight::hookWheelRight()
+
+MButton::Return
+MButton Up::hookMButtonUP()
+
+hookWheelUp() {
+    global isWheelUp
+    Send("{WheelUp}")
     isWheelUp := true
 }
 
-WheelDown:: hookWheelDown()
-global isWheelDown := false
-hookWheelDown(){
-    send {WheelDown}
+hookWheelDown() {
+    global isWheelDown
+    Send("{WheelDown}")
     isWheelDown := true
 }
 
-WheelLeft:: hookWheelLeft()
-global isWheelLeft := false
-hookWheelLeft(){
-    send {WheelLeft}
+hookWheelLeft() {
+    global isWheelLeft
+    Send("{WheelLeft}")
     isWheelLeft := true
 }
 
-WheelRight:: hookWheelRight()
-global isWheelRight := false
-hookWheelRight(){
-    send {WheelRight}
+hookWheelRight() {
+    global isWheelRight
+    Send("{WheelRight}")
     isWheelRight := true
 }
 
-; MButton を無効化
-MButton::return
+hookMButtonUP() {
+    global isWheelUp, isWheelDown, isWheelLeft, isWheelRight
+    ; スクロールされていない場合のみ MButton を送信
+    if !(isWheelUp || isWheelDown || isWheelLeft || isWheelRight)
+        Send("{MButton}")
 
-MButton up::hookMButtonUP()
-hookMButtonUP(){
-    ; MButton を押して離すまでにスクロールされなかった場合、MButton を押す
-    if(!(isWheelUp | isWheelDown | isWheelLeft | isWheelRight)){
-        send {MButton}
-    }
-    isWheelUp   := false
+    isWheelUp := false
     isWheelDown := false
     isWheelLeft := false
     isWheelRight := false

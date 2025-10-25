@@ -57,7 +57,7 @@ awk -v host="$HOST_NAME" -v host_line="$new_host" -v user_line="$new_user" -v id
       print host_line
       print user_line
       print identity_line
-    } else 
+    }
   }
 ' "$SSH_CONFIG" > "${SSH_CONFIG}.tmp"
 

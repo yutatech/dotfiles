@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+# .sshディレクトリが存在しない場合は作成
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+
 ssh-keygen -f ~/.ssh/github -t rsa -N ""
 
 # ssh-add-configを使ってconfigファイルに追記

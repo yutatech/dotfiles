@@ -13,6 +13,13 @@ HOST_NAME="$2"
 KEY_PATH="$HOME/.ssh/$3"
 SSH_CONFIG="$HOME/.ssh/config"
 
+# configファイルが存在しない場合は作成
+if [ ! -f "$SSH_CONFIG" ]; then
+  mkdir -p "$HOME/.ssh"
+  touch "$SSH_CONFIG"
+  chmod 600 "$SSH_CONFIG"
+fi
+
 # バックアップ作成
 cp "$SSH_CONFIG" "${SSH_CONFIG}.bak_$(date +%Y%m%d%H%M%S)" 2>/dev/null
 

@@ -1,3 +1,6 @@
 #compdef ssh-add-config
 
-_arguments '*: :_nothing'
+_arguments \
+  '1:username:_users' \
+  '2:hostname:_hosts' \
+  '3:key_name:_files -W ~/.ssh/'

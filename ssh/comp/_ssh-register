@@ -1,3 +1,5 @@
 #compdef ssh-register
 
-_arguments '*: :_nothing'
+_arguments \
+  '1:username:_users' \
+  '2:hostname:_hosts'

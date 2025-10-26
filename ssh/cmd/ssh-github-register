@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
 set -e
 
+# .sshディレクトリが存在しない場合は作成
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+
 ssh-keygen -f ~/.ssh/github -t rsa -N ""
+
+# ssh-add-configを使ってconfigファイルに追記
+ssh-add-config git github.com github
 
 # 登録する公開鍵ファイルパス
 KEY_FILE="$HOME/.ssh/github.pub"
 
 # 公開鍵の読み込み（改行を詰める）
 KEY=$(cat "$KEY_FILE" | tr -d '\n')
+
+URL="https://github.com/settings/ssh/new"
 
 # SSH接続先判定（SSH_CONNECTION環境変数があればSSHセッション）
 if [[ -n "$SSH_CONNECTION" ]]; then
@@ -16,27 +25,49 @@ if [[ -n "$SSH_CONNECTION" ]]; then
   echo "$KEY"
   echo
   echo "以下のURLをローカルマシンで開いてSSHキーを登録してください："
-  echo "https://github.com/settings/ssh/new"
+  # OSC 8ハイパーリンク（ターミナルが対応していればクリック可能）
+  printf '\e]8;;%s\e\\%s\e]8;;\e\\\n' "$URL" "$URL"
+  echo
+  echo "Enterキーを押すとURLが表示されます（ターミナルが対応していればクリック可能）"
+  read -r
+  echo "URL: $URL"
 else
-  # ローカル実行時のクリップボードコピー＆ブラウザ起動
+  # ローカル実行時のクリップボードコピー
   if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "$KEY" | pbcopy
-    open "https://github.com/settings/ssh/new"
+    echo "公開鍵をクリップボードにコピーしました。"
   elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
     echo "$KEY" | clip
-    powershell.exe start "https://github.com/settings/ssh/new"
+    echo "公開鍵をクリップボードにコピーしました。"
   elif command -v xclip &>/dev/null; then
     echo "$KEY" | xclip -selection clipboard
-    xdg-open "https://github.com/settings/ssh/new"
+    echo "公開鍵をクリップボードにコピーしました。"
   elif command -v wl-copy &>/dev/null; then
     echo "$KEY" | wl-copy
-    xdg-open "https://github.com/settings/ssh/new"
+    echo "公開鍵をクリップボードにコピーしました。"
   else
-    echo "クリップボードにコピーできません。手動で公開鍵をコピーしてください。"
     echo "----- SSH Public Key -----"
     echo "$KEY"
-    echo ""
-    echo "GitHubの登録ページ：https://github.com/settings/ssh/new"
-    exit 1
+    echo
+    echo "クリップボードにコピーできません。手動で公開鍵をコピーしてください。"
+  fi
+  
+  echo
+  echo "GitHubの登録ページ："
+  printf '\e]8;;%s\e\\%s\e]8;;\e\\\n' "$URL" "$URL"
+  echo
+  echo "Enterキーを押すとブラウザが開きます..."
+  read -r
+  
+  # ブラウザを開く
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    open "$URL"
+  elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
+    powershell.exe start "$URL"
+  elif command -v xdg-open &>/dev/null; then
+    xdg-open "$URL"
+  else
+    echo "ブラウザを自動で開けませんでした。手動で以下のURLを開いてください："
+    echo "$URL"
   fi
 fi

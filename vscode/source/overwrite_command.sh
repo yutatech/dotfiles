@@ -1,4 +1,9 @@
-if [ -n "$SSH_TTY" ] || [ -n "$VSCODE_IPC_HOOK_CLI" ]; then
+# Check if running in SSH, VS Code terminal, or WSL environment
+is_wsl() {
+  [ -n "$WSL_DISTRO_NAME" ] || grep -qiE "(microsoft|wsl)" /proc/version 2>/dev/null
+}
+
+if [ -n "$SSH_TTY" ] || [ -n "$VSCODE_IPC_HOOK_CLI" ] || is_wsl; then
   :
 else
 

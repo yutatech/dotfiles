@@ -62,7 +62,7 @@ elif [ -n "${BASH_VERSION}" ]; then
     _scp_get_ssh_hosts() {
         local ssh_config="$HOME/.ssh/config"
         if [ -f "$ssh_config" ]; then
-            grep '^Host ' "$ssh_config" 2>/dev/null | awk '{print $2}' | grep -v '[*?]' | sed 's/$/:/'
+            grep '^Host ' "$ssh_config" 2>/dev/null | awk '{print $2}' | grep -v '[*?]' | awk '{print $1 ":"}'
         fi
     }
 
@@ -107,11 +107,17 @@ elif [ -n "${BASH_VERSION}" ]; then
             # Check if host exists in SSH config
             if [ -f "$ssh_config" ] && grep -q "^Host[[:space:]]\+$hostname[[:space:]]*$" "$ssh_config" 2>/dev/null; then
                 # Get remote files without loading .rc files
-                # Escape the path to prevent command injection
-                local escaped_path=$(printf '%q' "$path")
-                local remote_files=$(ssh -F "$ssh_config" -o 'BatchMode yes' -n "$hostname" "ls -dp ${escaped_path}* 2>/dev/null" 2>/dev/null)
+                # Use printf %q to safely escape the path
+                local remote_files=$(ssh -F "$ssh_config" -o 'BatchMode yes' -n "$hostname" "
+                    compgen -f $(printf '%q' "$path")
+                " 2>/dev/null)
                 if [ -n "$remote_files" ]; then
-                    COMPREPLY=( $(compgen -W "$remote_files" -P "${host}:" -- "$path") )
+                    # Add host: prefix to each file
+                    local -a completions
+                    while IFS= read -r file; do
+                        [[ -n "$file" ]] && completions+=("${host}:${file}")
+                    done <<< "$remote_files"
+                    COMPREPLY=( $(compgen -W "${completions[*]}" -- "$cur") )
                 fi
             fi
             return 0

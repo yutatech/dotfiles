@@ -107,10 +107,9 @@ elif [ -n "${BASH_VERSION}" ]; then
             # Check if host exists in SSH config
             if [ -f "$ssh_config" ] && grep -q "^Host[[:space:]]\+$hostname[[:space:]]*$" "$ssh_config" 2>/dev/null; then
                 # Get remote files without loading .rc files
-                # Use printf %q to safely escape the path
-                local remote_files=$(ssh -F "$ssh_config" -o 'BatchMode yes' -n "$hostname" "
-                    compgen -f $(printf '%q' "$path")
-                " 2>/dev/null)
+                # Use printf %q to safely escape the path for shell
+                local escaped_path=$(printf '%q' "$path")
+                local remote_files=$(ssh -F "$ssh_config" -o 'BatchMode yes' -n "$hostname" "ls -dp ${escaped_path}* 2>/dev/null" 2>/dev/null)
                 if [ -n "$remote_files" ]; then
                     # Add host: prefix to each file
                     local -a completions

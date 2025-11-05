@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 set -e
 
-if [ $# -ne 3 ]; then
-  echo "Usage: ssh-add-config <username> <hostname> <key_name>"
+if [ $# -lt 3 ] || [ $# -gt 4 ]; then
+  echo "Usage: ssh-add-config <username> <hostname> <key_name> [host]"
   echo ""
   echo "  This command adds ssh remote configuration to ~/.ssh/config"
+  echo "  If [host] is provided, it will be used as Host alias, otherwise hostname is used"
   exit 1
 fi
 
 USER_NAME="$1"
 HOST_NAME="$2"
 KEY_PATH="$HOME/.ssh/$3"
+# If fourth argument is provided, use it as Host, otherwise use HOST_NAME
+HOST="${4:-$HOST_NAME}"
 SSH_CONFIG="$HOME/.ssh/config"
 
 # configファイルが存在しない場合は作成
@@ -27,11 +30,12 @@ cp "$SSH_CONFIG" "${SSH_CONFIG}.bak_$(date +%Y%m%d%H%M%S)" 2>/dev/null
 in_host_section=0
 
 # 新しい設定行を作成
-new_host="Host $HOST_NAME"
+new_host="Host $HOST"
+new_hostname="  HostName $HOST_NAME"
 new_user="  User $USER_NAME"
 new_identity="  IdentityFile $KEY_PATH"
 
-awk -v host="$HOST_NAME" -v host_line="$new_host" -v user_line="$new_user" -v identity_line="$new_identity" '
+awk -v host="$HOST" -v host_line="$new_host" -v hostname_line="$new_hostname" -v user_line="$new_user" -v identity_line="$new_identity" '
   BEGIN { in_host=0; found_host=0 }
   /^Host[ \t]+/ {
     if (in_host == 1) { in_host=0 }
@@ -39,7 +43,9 @@ awk -v host="$HOST_NAME" -v host_line="$new_host" -v user_line="$new_user" -v id
   }
   {
     if (in_host == 1) {
-      if ($1 == "User") {
+      if ($1 == "HostName") {
+        print hostname_line
+      } else if ($1 == "User") {
         print user_line
       } else if ($1 == "IdentityFile")  {
         print identity_line
@@ -55,6 +61,7 @@ awk -v host="$HOST_NAME" -v host_line="$new_host" -v user_line="$new_user" -v id
     # host
     if (found_host == 0) {
       print host_line
+      print hostname_line
       print user_line
       print identity_line
     }
@@ -63,4 +70,4 @@ awk -v host="$HOST_NAME" -v host_line="$new_host" -v user_line="$new_user" -v id
 
 mv "${SSH_CONFIG}.tmp" "$SSH_CONFIG"
 
-echo "Updated SSH config for host '$HOST_NAME'. Backup saved as ${SSH_CONFIG}.bak_*"
+echo "Updated SSH config for Host '$HOST' (HostName: '$HOST_NAME'). Backup saved as ${SSH_CONFIG}.bak_*"

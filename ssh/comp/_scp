@@ -12,11 +12,13 @@ _scp_remote_files() {
     local hostname=${host##*@}
     
     # Check if host exists in SSH config
-    if [[ -f "$ssh_config" ]] && grep -q "^Host\s\+$hostname\s*$" "$ssh_config"; then
+    if [[ -f "$ssh_config" ]] && grep -q "^Host\s\+$hostname\s*$" "$ssh_config" 2>/dev/null; then
         # Use ssh to list remote files, without loading .rc files
         # -F: use ssh config, -o BatchMode=yes: non-interactive
         # -n: redirect stdin from /dev/null to avoid reading .rc
-        local remote_files=$(ssh -F "$ssh_config" -o 'BatchMode yes' -n "$hostname" "ls -dp ${path}* 2>/dev/null" 2>/dev/null)
+        # Escape the path to prevent command injection
+        local escaped_path=${path:q}
+        local remote_files=$(ssh -F "$ssh_config" -o 'BatchMode yes' -n "$hostname" "ls -dp ${escaped_path}* 2>/dev/null" 2>/dev/null)
         
         if [[ -n "$remote_files" ]]; then
             local -a files
@@ -32,7 +34,7 @@ _scp_ssh_hosts() {
     
     if [[ -f "$ssh_config" ]]; then
         # Extract Host entries from SSH config (exclude wildcards)
-        hosts=(${(f)"$(grep '^Host ' "$ssh_config" | awk '{print $2}' | grep -v '[*?]')"})
+        hosts=(${(f)"$(grep '^Host ' "$ssh_config" 2>/dev/null | awk '{print $2}' | grep -v '[*?]')"})
     fi
     
     if (( ${#hosts[@]} > 0 )); then

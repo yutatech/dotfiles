@@ -58,6 +58,14 @@ elif [ -n "${BASH_VERSION}" ]; then
     }
     complete -F _ssh_setup ssh-setup
 
+    # Helper function to extract SSH hosts from config
+    _scp_get_ssh_hosts() {
+        local ssh_config="$HOME/.ssh/config"
+        if [ -f "$ssh_config" ]; then
+            grep '^Host ' "$ssh_config" 2>/dev/null | awk '{print $2}' | grep -v '[*?]' | sed 's/$/:/'
+        fi
+    }
+
     _scp() {
         local cur prev
         COMPREPLY=()
@@ -94,11 +102,14 @@ elif [ -n "${BASH_VERSION}" ]; then
             local host="${BASH_REMATCH[1]}"
             local path="${BASH_REMATCH[2]}"
             local hostname="${host##*@}"
+            local ssh_config="$HOME/.ssh/config"
             
             # Check if host exists in SSH config
-            if [ -f "$HOME/.ssh/config" ] && grep -q "^Host[[:space:]]\+$hostname[[:space:]]*$" "$HOME/.ssh/config"; then
+            if [ -f "$ssh_config" ] && grep -q "^Host[[:space:]]\+$hostname[[:space:]]*$" "$ssh_config" 2>/dev/null; then
                 # Get remote files without loading .rc files
-                local remote_files=$(ssh -F "$HOME/.ssh/config" -o 'BatchMode yes' -n "$hostname" "ls -dp ${path}* 2>/dev/null" 2>/dev/null)
+                # Escape the path to prevent command injection
+                local escaped_path=$(printf '%q' "$path")
+                local remote_files=$(ssh -F "$ssh_config" -o 'BatchMode yes' -n "$hostname" "ls -dp ${escaped_path}* 2>/dev/null" 2>/dev/null)
                 if [ -n "$remote_files" ]; then
                     COMPREPLY=( $(compgen -W "$remote_files" -P "${host}:" -- "$path") )
                 fi
@@ -122,10 +133,7 @@ elif [ -n "${BASH_VERSION}" ]; then
                 COMPREPLY=( $(compgen -f -- "$cur") )
             else
                 # Source is local, destination can be remote or local
-                local ssh_hosts=""
-                if [ -f "$HOME/.ssh/config" ]; then
-                    ssh_hosts=$(grep '^Host ' "$HOME/.ssh/config" | awk '{print $2}' | grep -v '[*?]' | sed 's/$/:/')
-                fi
+                local ssh_hosts=$(_scp_get_ssh_hosts)
                 COMPREPLY=( $(compgen -f -- "$cur") )
                 if [ -n "$ssh_hosts" ]; then
                     COMPREPLY+=( $(compgen -W "$ssh_hosts" -- "$cur") )
@@ -133,10 +141,7 @@ elif [ -n "${BASH_VERSION}" ]; then
             fi
         else
             # This is the source argument
-            local ssh_hosts=""
-            if [ -f "$HOME/.ssh/config" ]; then
-                ssh_hosts=$(grep '^Host ' "$HOME/.ssh/config" | awk '{print $2}' | grep -v '[*?]' | sed 's/$/:/')
-            fi
+            local ssh_hosts=$(_scp_get_ssh_hosts)
             COMPREPLY=( $(compgen -f -- "$cur") )
             if [ -n "$ssh_hosts" ]; then
                 COMPREPLY+=( $(compgen -W "$ssh_hosts" -- "$cur") )

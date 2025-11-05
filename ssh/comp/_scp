@@ -1,0 +1,116 @@
+#compdef scp
+
+# SCP completion with remote file support
+# Completes remote files when using host:path syntax
+
+_scp_remote_files() {
+    local host=$1
+    local path=$2
+    local ssh_config="$HOME/.ssh/config"
+    
+    # Extract just the hostname (remove user@ if present)
+    local hostname=${host##*@}
+    
+    # Check if host exists in SSH config
+    if [[ -f "$ssh_config" ]] && grep -q "^Host\s\+$hostname\s*$" "$ssh_config"; then
+        # Use ssh to list remote files, without loading .rc files
+        # -F: use ssh config, -o BatchMode=yes: non-interactive
+        # -n: redirect stdin from /dev/null to avoid reading .rc
+        local remote_files=$(ssh -F "$ssh_config" -o 'BatchMode yes' -n "$hostname" "ls -dp ${path}* 2>/dev/null" 2>/dev/null)
+        
+        if [[ -n "$remote_files" ]]; then
+            local -a files
+            files=(${(f)remote_files})
+            _describe -t files 'remote files' files
+        fi
+    fi
+}
+
+_scp_ssh_hosts() {
+    local ssh_config="$HOME/.ssh/config"
+    local -a hosts
+    
+    if [[ -f "$ssh_config" ]]; then
+        # Extract Host entries from SSH config (exclude wildcards)
+        hosts=(${(f)"$(grep '^Host ' "$ssh_config" | awk '{print $2}' | grep -v '[*?]')"})
+    fi
+    
+    if (( ${#hosts[@]} > 0 )); then
+        _describe -t hosts 'ssh hosts' hosts
+    fi
+}
+
+_scp() {
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+    local -a args files
+    
+    # Parse command line to determine position
+    local -i source_idx=0 dest_idx=0
+    local -i i=1
+    local word
+    
+    # Find source and destination arguments (skip options)
+    for word in "${words[@]:1}"; do
+        if [[ "$word" != -* ]]; then
+            if (( source_idx == 0 )); then
+                source_idx=$i
+            else
+                dest_idx=$i
+                break
+            fi
+        fi
+        (( i++ ))
+    done
+    
+    local current="${words[CURRENT]}"
+    local is_destination=0
+    
+    # Determine if current argument is destination
+    if (( CURRENT > source_idx && source_idx > 0 )); then
+        is_destination=1
+    fi
+    
+    # Case 1: host: pattern - complete with / and ~
+    if [[ "$current" =~ ^[^/~.]+:$ ]]; then
+        _values 'remote paths' '/' '~'
+        return 0
+    fi
+    
+    # Case 2: host:path pattern - complete remote files
+    if [[ "$current" =~ ^([^:]+):(.*)$ ]]; then
+        local host="${match[1]}"
+        local path="${match[2]}"
+        _scp_remote_files "$host" "$path"
+        return 0
+    fi
+    
+    # Case 3: Starts with /, ~, or . - complete local files
+    if [[ "$current" =~ ^[/~.] ]]; then
+        _files
+        return 0
+    fi
+    
+    # Case 4: Empty or other - need to determine based on context
+    if (( is_destination )); then
+        # This is the destination argument
+        local source="${words[source_idx]}"
+        
+        if [[ "$source" =~ ^[^:]+: ]]; then
+            # Source is remote, destination should be local
+            _files
+        else
+            # Source is local, destination can be remote or local
+            _alternative \
+                'hosts:ssh hosts:_scp_ssh_hosts' \
+                'files:local files:_files'
+        fi
+    else
+        # This is the source argument (or first argument)
+        _alternative \
+            'hosts:ssh hosts:_scp_ssh_hosts' \
+            'files:local files:_files'
+    fi
+}
+
+_scp "$@"

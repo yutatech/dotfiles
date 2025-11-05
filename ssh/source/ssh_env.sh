@@ -57,4 +57,91 @@ elif [ -n "${BASH_VERSION}" ]; then
         COMPREPLY=()
     }
     complete -F _ssh_setup ssh-setup
+
+    _scp() {
+        local cur prev
+        COMPREPLY=()
+        cur="${COMP_WORDS[COMP_CWORD]}"
+        
+        # Find source and destination positions
+        local source_idx=0
+        local dest_idx=0
+        local i
+        for ((i=1; i<${#COMP_WORDS[@]}; i++)); do
+            if [[ "${COMP_WORDS[i]}" != -* ]]; then
+                if [ $source_idx -eq 0 ]; then
+                    source_idx=$i
+                else
+                    dest_idx=$i
+                    break
+                fi
+            fi
+        done
+        
+        local is_destination=0
+        if [ $COMP_CWORD -gt $source_idx ] && [ $source_idx -gt 0 ]; then
+            is_destination=1
+        fi
+        
+        # Case 1: host: pattern - complete with / and ~
+        if [[ "$cur" =~ ^[^/~.]+:$ ]]; then
+            COMPREPLY=( "/" "~" )
+            return 0
+        fi
+        
+        # Case 2: host:path pattern - complete remote files
+        if [[ "$cur" =~ ^([^:]+):(.*)$ ]]; then
+            local host="${BASH_REMATCH[1]}"
+            local path="${BASH_REMATCH[2]}"
+            local hostname="${host##*@}"
+            
+            # Check if host exists in SSH config
+            if [ -f "$HOME/.ssh/config" ] && grep -q "^Host[[:space:]]\+$hostname[[:space:]]*$" "$HOME/.ssh/config"; then
+                # Get remote files without loading .rc files
+                local remote_files=$(ssh -F "$HOME/.ssh/config" -o 'BatchMode yes' -n "$hostname" "ls -dp ${path}* 2>/dev/null" 2>/dev/null)
+                if [ -n "$remote_files" ]; then
+                    COMPREPLY=( $(compgen -W "$remote_files" -P "${host}:" -- "$path") )
+                fi
+            fi
+            return 0
+        fi
+        
+        # Case 3: Starts with /, ~, or . - complete local files
+        if [[ "$cur" =~ ^[/~.] ]]; then
+            COMPREPLY=( $(compgen -f -- "$cur") )
+            return 0
+        fi
+        
+        # Case 4: Empty or other - depends on context
+        if [ $is_destination -eq 1 ]; then
+            # This is the destination argument
+            local source="${COMP_WORDS[$source_idx]}"
+            
+            if [[ "$source" =~ ^[^:]+: ]]; then
+                # Source is remote, destination should be local
+                COMPREPLY=( $(compgen -f -- "$cur") )
+            else
+                # Source is local, destination can be remote or local
+                local ssh_hosts=""
+                if [ -f "$HOME/.ssh/config" ]; then
+                    ssh_hosts=$(grep '^Host ' "$HOME/.ssh/config" | awk '{print $2}' | grep -v '[*?]' | sed 's/$/:/')
+                fi
+                COMPREPLY=( $(compgen -f -- "$cur") )
+                if [ -n "$ssh_hosts" ]; then
+                    COMPREPLY+=( $(compgen -W "$ssh_hosts" -- "$cur") )
+                fi
+            fi
+        else
+            # This is the source argument
+            local ssh_hosts=""
+            if [ -f "$HOME/.ssh/config" ]; then
+                ssh_hosts=$(grep '^Host ' "$HOME/.ssh/config" | awk '{print $2}' | grep -v '[*?]' | sed 's/$/:/')
+            fi
+            COMPREPLY=( $(compgen -f -- "$cur") )
+            if [ -n "$ssh_hosts" ]; then
+                COMPREPLY+=( $(compgen -W "$ssh_hosts" -- "$cur") )
+            fi
+        fi
+    }
+    complete -o nospace -F _scp scp
 fi

@@ -26,7 +26,7 @@ if [ ! -f "$HOME/.zshrc" ]; then
   echo "Creating $HOME/.zshrc"
   touch "$HOME/.zshrc"
   echo "# Zsh configuration file" > "$HOME/.zshrc"
-  echo "source $REPO_DIR/my-configuration.zsh" >> "$HOME/.zshrc"
+  echo "source $REPO_DIR/dotfile.zsh" >> "$HOME/.zshrc"
 fi
 
 # 現在のdefault shell を取得

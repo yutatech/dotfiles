@@ -88,7 +88,7 @@ PgDn::Return
 !/::^/
 !?::^?
 !Esc::^Esc
-!Tab::^Tab
+;!Tab::^Tab
 !Space::^Space
 !Left::^Left
 !Right::^Right
@@ -184,7 +184,7 @@ PgDn::Return
 !+/::^+/
 !+?::^+?
 !+Esc::^+Esc
-!+Tab::^+Tab
+;!+Tab::^+Tab
 !+Space::^+Space
 !+Left::^+Left
 !+Right::^+Right
@@ -294,3 +294,4 @@ GetInputLang() {
     hkl := DllCall("GetKeyboardLayout", "uint", threadId, "ptr")
     return Format("{:04X}", hkl & 0xFFFF)  ; 下位16ビットが言語ID
 }
+

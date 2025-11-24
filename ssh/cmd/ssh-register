@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ $# -lt 2 ] || [ $# -gt 3 ]; then
+  echo "ssh-register <username> <hostname> [host]"
+  echo ""
+  echo "  This command create new ssh key pair and upload public key to remote host"
+  echo "  If [host] is provided, it will be used as Host alias in SSH config"
+  exit 1
+fi
+
+USER_NAME="$1"
+HOST_NAME="$2"
+HOST="${3:-$HOST_NAME}"  # If third argument is provided, use it as Host, otherwise use HOST_NAME
+
+# HOST_NAMEで.より前の部分を抽出
+KEY_NAME=$(echo $HOST_NAME | cut -d. -f1)
+
+ssh-keygen -f ~/.ssh/$KEY_NAME -t rsa -N ""
+# Pass HOST as the fourth argument to ssh-add-config
+ssh-add-config $USER_NAME $HOST_NAME $KEY_NAME $HOST
+
+# ssh経由でremote hostの~/.ssh/authorized_keysに公開鍵を追加
+ssh $USER_NAME@$HOST_NAME "cat >> ~/.ssh/authorized_keys" < ~/.ssh/$KEY_NAME.pub

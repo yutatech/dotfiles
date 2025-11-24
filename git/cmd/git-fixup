@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+set -e
+
+show_help() {
+    echo "Usage: git fixup <commit>"
+    echo "  Fix up a commit by amending it with the changes in the stage."
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  show_help
+  exit 0
+fi
+
+git commit --fixup=$1 && \
+GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --autostash $1~1

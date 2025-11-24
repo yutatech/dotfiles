@@ -1,2 +1,44 @@
-#!/bin/sh
-git branch --merged | grep -v "\*" | xargs git branch -d
+#!/usr/bin/env sh
+set -e
+
+show_help() {
+    echo "Usage: git clear"
+    echo "  Delete all merged branches in the current Git repository."
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  show_help
+  exit 0
+fi
+
+
+BRANCHES=$(git branch -a | sed 's/^..//')
+
+if [ -z "$BRANCHES" ]; then
+  echo "No branches found."
+  exit 0
+fi
+
+DEFAULT_BRANCH=""
+
+if echo "$BRANCHES" | grep -q "^remotes/origin/main$"; then
+  DEFAULT_BRANCH="origin/main"
+elif echo "$BRANCHES" | grep -q "^remotes/origin/master$"; then
+  DEFAULT_BRANCH="origin/master"
+elif echo "$BRANCHES" | grep -q "^main$"; then
+    DEFAULT_BRANCH="main"
+elif echo "$BRANCHES" | grep -q "^master$"; then
+    DEFAULT_BRANCH="master"
+else
+  echo "No default branch found."
+  exit 1
+fi
+
+DELETE_BRANCH=$(git branch --merged $DEFAULT_BRANCH | grep -v "\*" | grep -v "main")
+
+git fetch -p
+if [ -z "$DELETE_BRANCH" ]; then
+  echo "No merged local branch"
+else
+  git branch -D $DELETE_BRANCH
+fi

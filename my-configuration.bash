@@ -1,12 +1,14 @@
 MY_CONFIGURATION_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
 
-source $MY_CONFIGURATION_DIR/zsh/zsh.sh
-source $MY_CONFIGURATION_DIR/bash/bash.sh
-source $MY_CONFIGURATION_DIR/git/git.sh
-source $MY_CONFIGURATION_DIR/git/git_comp.sh
-source $MY_CONFIGURATION_DIR/tmux/tmux.sh
-source $MY_CONFIGURATION_DIR/vscode/vscode.sh
-source $MY_CONFIGURATION_DIR/ros2/ros2.sh
-source $MY_CONFIGURATION_DIR/ros2/ros2_comp.sh
+DOTFILES_PARENT_DIR=$(cd $MY_CONFIGURATION_DIR/.. && pwd)
 
-source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
+# bashrcからmy-configurationが含まれる行を削除
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s|source .*my-configuration\.bash|source $DOTFILES_PARENT_DIR/dotfiles/dotfile.bash|" ~/.bashrc
+else
+    sed -i "s|source .*my-configuration\.bash|source $DOTFILES_PARENT_DIR/dotfiles/dotfile.bash|" ~/.bashrc
+fi
+
+mv $MY_CONFIGURATION_DIR $MY_CONFIGURATION_DIR/../dotfiles
+
+source "$DOTFILES_PARENT_DIR/dotfiles/dotfile.bash"

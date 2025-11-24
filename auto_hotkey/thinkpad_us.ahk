@@ -94,7 +94,6 @@
 !PgUp::Send("^{PgUp}")
 !PgDn::Send("^{PgDn}")
 
-
 IME_SET(SetSts, WinTitle:="A")    {
     hwnd := WinExist(WinTitle)
     if  (WinActive(WinTitle))   {

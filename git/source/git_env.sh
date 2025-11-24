@@ -1,3 +1,6 @@
+# 自作サブコマンド
+export PATH="$REPO_DIR/git/cmd:$PATH"
+
 if [ -n "${ZSH_VERSION}" ]; then
   # vcs_info
   autoload -Uz vcs_info
@@ -11,6 +14,9 @@ if [ -n "${ZSH_VERSION}" ]; then
       RPROMPT="${vcs_info_msg_0_}"
   }
   add-zsh-hook precmd _update_vcs_info_msg
+
+  # zshの補完関数のパスを追加
+  fpath=($REPO_DIR/git/comp $fpath)
 elif [ -n "${BASH_VERSION}" ]; then
   GIT_PS1_SHOWDIRTYSTATE=true
   GIT_PS1_SHOWUNTRACKEDFILES=true

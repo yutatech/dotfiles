@@ -1,12 +1,9 @@
 #!/bin/sh
 # git configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
-source $SCRIPT_DIR/../setup_utils/utils.sh
+source $REPO_DIR/setup_utils/utils.sh
 
-# 自作サブコマンド
-export PATH="$SCRIPT_DIR/cmd:$PATH"
-
-SOURCE_FILES=""
+SOURCE_FILES="$SCRIPT_DIR/source/git_env.sh"
 
 CHECK_FILES=""
 
@@ -14,7 +11,6 @@ SYMLINKS="
     $HOME/.gitconfig
     $HOME/.gitignore_global
 "
-
 if [ -n "${BASH_VERSION}" ]; then
     # bashの場合
     SOURCE_FILES="
@@ -34,7 +30,6 @@ if [ $CONFIG_COMPETED -eq 1 ]; then
     source $SCRIPT_DIR/source/overwrite_command.sh
 else
     source_all "$SOURCE_FILES"
-    source $SCRIPT_DIR/source/git_env.sh
 fi
 
-source $SCRIPT_DIR/../setup_utils/unset_utils.sh
+source $REPO_DIR/setup_utils/unset_utils.sh

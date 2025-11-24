@@ -9,15 +9,26 @@
     "editor.insertSpaces": true,
     "[c]": {
         "editor.tabSize": 2,
-        "editor.insertSpaces": true
+        "editor.insertSpaces": true,
+        "editor.rulers": [
+            80
+        ],
+        "editor.defaultFormatter": "ms-vscode.cpptools"
     },
     "[cpp]": {
         "editor.tabSize": 2,
-        "editor.insertSpaces": true
+        "editor.insertSpaces": true,
+        "editor.rulers": [
+            80
+        ],
+        "editor.defaultFormatter": "ms-vscode.cpptools"
     },
     "[python]": {
         "editor.tabSize": 4,
         "editor.insertSpaces": true,
+        "editor.rulers": [
+            80
+        ],
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
     "[makefile]": {
@@ -29,17 +40,49 @@
         "editor.insertSpaces": true
     },
     "[javascript]": {
-        "editor.tabSize": 4,
+        "editor.tabSize": 2,
         "editor.insertSpaces": true
     },
     "[xml]": {
         "editor.tabSize": 4,
         "editor.insertSpaces": true
     },
+    "[shellscript]": {
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.defaultFormatter": "foxundermoon.shell-format"
+    },
     "cmake.configureOnOpen": true,
     "cmake.pinnedCommands": [
         "workbench.action.tasks.configureTaskRunner",
         "workbench.action.tasks.runTask"
     ],
-    "github.copilot.nextEditSuggestions.enabled": true
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "hediet.vscode-drawio.resizeImages": null,
+    "hediet.vscode-drawio.codeLinkActivated": true,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "git.confirmSync": false,
+    "notebook.output.scrolling": true,
+    "C_Cpp.doxygen.generatedStyle": "/**",
+    "githubPullRequests.pullBranch": "never",
+
+    "python.analysis.extraPaths": [
+        "${env:HOME}/Library/Python/3.13/lib/python/site-packages/",
+        "${env:HOME}/Library/Python/3.12/lib/python/site-packages/",
+        "${env:HOME}/Library/Python/3.11/lib/python/site-packages/",
+        "${env:HOME}/Library/Python/3.10/lib/python/site-packages/",
+        "${env:HOME}/Library/Python/3.9/lib/python/site-packages/",
+        "${env:HOME}/Library/Python/3.8/lib/python/site-packages/"
+    ]
 }

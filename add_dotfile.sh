@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
 
@@ -10,12 +10,12 @@ if [ $parent_shell = bash ]; then
     touch ~/.bashrc
   fi
   source $SCRIPT_DIR/setup_utils/add_line_to_bashrc.sh
-  add_line_to_bashrc "source $SCRIPT_DIR/my-configuration.bash"
+  add_line_to_bashrc "source $SCRIPT_DIR/dotfile.bash"
 elif [ $parent_shell = zsh ]; then
   # zshの場合
   if [ ! -e "$HOME/.zshrc" ]; then
     touch ~/.zshrc
   fi
   source $SCRIPT_DIR/setup_utils/add_line_to_zshrc.sh
-  add_line_to_zshrc "source $SCRIPT_DIR/my-configuration.zsh"
+  add_line_to_zshrc "source $SCRIPT_DIR/dotfile.zsh"
 fi

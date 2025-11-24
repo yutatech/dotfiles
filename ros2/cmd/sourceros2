@@ -1,0 +1,6 @@
+#!/usr/bin/env zsh
+set -e
+
+source $1
+eval "$(register-python-argcomplete3 ros2)"
+eval "$(register-python-argcomplete3 colcon)"

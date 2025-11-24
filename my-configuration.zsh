@@ -1,18 +1,14 @@
 MY_CONFIGURATION_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
 
-source $MY_CONFIGURATION_DIR/bash/bash.sh
-source $MY_CONFIGURATION_DIR/git/git.sh
-source $MY_CONFIGURATION_DIR/tmux/tmux.sh
-source $MY_CONFIGURATION_DIR/vscode/vscode.sh
-source $MY_CONFIGURATION_DIR/ros2/ros2.sh
-source $MY_CONFIGURATION_DIR/zsh/zsh.sh
+DOTFILES_PARENT_DIR=$(cd $MY_CONFIGURATION_DIR/.. && pwd)
 
-source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
+# bashrcからmy-configurationが含まれる行を削除
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s|source .*my-configuration\.zsh|source $DOTFILES_PARENT_DIR/dotfiles/dotfile.zsh|" ~/.zshrc
+else
+    sed -i "s|source .*my-configuration\.zsh|source $DOTFILES_PARENT_DIR/dotfiles/dotfile.zsh|" ~/.zshrc
+fi
 
-# 補完機能を有効にする
-# compinitを実行するので、他のcompinitより前に実行すべきものをzsh.shより前に実行する
-autoload -Uz compinit
-compinit
+mv $MY_CONFIGURATION_DIR $MY_CONFIGURATION_DIR/../dotfiles
 
-source $MY_CONFIGURATION_DIR/git/git_comp.sh
-source $MY_CONFIGURATION_DIR/ros2/ros2_comp.sh
+source "$DOTFILES_PARENT_DIR/dotfiles/dotfile.zsh"

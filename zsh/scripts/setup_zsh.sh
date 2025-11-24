@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SCRIPT_DIR/../../setup_utils/utils.sh
@@ -18,7 +19,15 @@ done
 
 COMMANDS="zsh"
 check_and_install_commands "$COMMANDS"
-unset -f zsh 2>/dev/null
+
+# $HOME/.zshrc が存在しない場合は、作成
+if [ ! -f "$HOME/.zshrc" ]; then
+  REPO_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+  echo "Creating $HOME/.zshrc"
+  touch "$HOME/.zshrc"
+  echo "# Zsh configuration file" > "$HOME/.zshrc"
+  echo "source $REPO_DIR/dotfile.zsh" >> "$HOME/.zshrc"
+fi
 
 # 現在のdefault shell を取得
 if [[ "$OSTYPE" == "darwin"* ]]; then

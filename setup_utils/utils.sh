@@ -22,7 +22,7 @@ symlink_exists() {
   fi
 
   for symlink in $symlinks; do
-    if [ ! -L "$symlink" ]; then
+    if [ ! -L "$symlink" ] || [ ! -e "$(readlink "$symlink")" ]; then
       return 1
     fi
   done
@@ -64,14 +64,17 @@ is_configure_completed() {
 
   if ! file_exists "$check_files"; then
     is_completed=1
+    # echo "Missing files: $check_files"
   fi
 
   if ! symlink_exists "$symlinks"; then
     is_completed=1
+    # echo "Missing symlinks: $symlinks"
   fi
 
   if ! command_exists "$commands"; then
     is_completed=1
+    # echo "Missing commands: $commands"
   fi
 
   return $is_completed
@@ -94,4 +97,51 @@ check_and_install_commands() {
       fi
     fi
   done
+}
+
+check_and_install_apt_pkgs() {
+  local pkgs=$@
+
+  if [ -n "${ZSH_VERSION}" ]; then
+    pkgs=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  fi
+
+  for pkg in $pkgs; do
+    if ! apt show $pkg > /dev/null 2>&1; then
+      echo "Installing $pkg..."
+      sudo apt install $pkg -y
+    else
+      echo "$pkg already installed"
+    fi
+  done
+}
+
+check_and_install_brew_pkgs() {
+  local pkgs=$@
+
+  if [ -n "${ZSH_VERSION}" ]; then
+    pkgs=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  fi
+
+  for pkg in $pkgs; do
+    if ! brew info $pkg > /dev/null 2>&1; then
+      echo "Installing $pkg..."
+      brew install $pkg -y
+    fi
+  done
+}
+
+check_and_install_pkgs() {
+  local pkgs=$@
+
+  if [ -n "${ZSH_VERSION}" ]; then
+    pkgs=(${(Q)${(z)${(f)"$(print -r -- $@)"}}})
+  fi
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    check_and_install_brew_pkgs "$pkgs"
+  else
+    check_and_install_apt_pkgs "$pkgs"
+  fi
+
 }

@@ -8,6 +8,7 @@ SOURCE_FILES=""
 CHECK_FILES="
     $SCRIPT_DIR/completion/zsh-autosuggestions/zsh-autosuggestions.zsh
     $SCRIPT_DIR/completion/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    $HOME/.zshrc
 "
 
 SYMLINKS=""

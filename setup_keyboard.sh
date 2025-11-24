@@ -1,16 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # Ubuntuの場合
   echo "Setting up keyboard on Ubuntu..."
-
-  sudo apt install fcitx5-mozc -y
-  im-config -n fcitx5
-  mkdir -p ~/.config/fcitx5/
-  cp $SCRIPT_DIR/fcitx5/config ~/.config/fcitx5/
-  cp $SCRIPT_DIR/fcitx5/fcitx5.desktop ~/.config/autostart/
 
   # cp -r ./xkb ~/.xkb
   # echo "xkbcomp -I$HOME/.xkb ~/.xkb/keymap/kbd $DISPLAY> /dev/null" >> ~/.bashrc

@@ -14,7 +14,7 @@ proxy_server = subprocess.run(
 ).stdout.strip()
 ssh_exec = "autossh"
 
-command = f"{ssh_exec} -M 0 -f -N -D {proxy_port} {proxy_server} -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
+command = f"{ssh_exec} -M 0 -f -N -D 127.0.0.1:{proxy_port} {proxy_server} -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
 
 
 def _check():

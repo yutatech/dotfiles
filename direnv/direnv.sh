@@ -1,7 +1,7 @@
 #!/bin/sh
 # direnv configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
-source $SCRIPT_DIR/../setup_utils/utils.sh
+source $REPO_DIR/setup_utils/utils.sh
 
 SOURCE_FILES="$SCRIPT_DIR/source/direnv_env.sh"
 
@@ -21,4 +21,4 @@ else
     source_all "$SOURCE_FILES"
 fi
 
-source $SCRIPT_DIR/../setup_utils/unset_utils.sh
+source $REPO_DIR/setup_utils/unset_utils.sh

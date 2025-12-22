@@ -17,6 +17,7 @@ source $MY_CONFIGURATION_DIR/chrome/chrome.sh
 source $MY_CONFIGURATION_DIR/ssh/ssh.sh
 source $MY_CONFIGURATION_DIR/terminal/terminal.sh
 source $MY_CONFIGURATION_DIR/docker/docker.sh
+source $MY_CONFIGURATION_DIR/direnv/direnv.sh
 
 source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
 

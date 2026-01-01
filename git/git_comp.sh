@@ -9,4 +9,8 @@ elif [ -n "${BASH_VERSION}" ]; then
         COMPREPLY=()
     }
     complete -F _git_fixup git-fixup
+    _git_graph() {
+        COMPREPLY=()
+    }
+    complete -F _git_graph git-graph
 fi

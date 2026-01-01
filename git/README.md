@@ -2,7 +2,8 @@
 
 ## サブコマンドの作り方
 1. `git/cmd/git-cmd`にサブコマンドの中身を実装
-2. `git/comp/_git-cmd`に補完関数を実装
+2. `git/cmd/git-cmd`に実行権限を付与
+3. `git/comp/_git-cmd`に補完関数を実装
     - サブコマンドの引数を補完する関数
     - 1行目に`#compdef git-cmd`
     - 2行目に`#description description`

@@ -91,5 +91,6 @@
         "/^cmake\\s+.*(--dry-run|-N|--build\\s+.*--target\\s+help).*/": true,
         "/^(gcc|g\\+\\+|clang|clang\\+\\+|python|python3|node|npm|pip|cargo|git|cmake|make|ninja)\\s+--version$/": true,
         "/^(pwd|whoami|uname|env|printenv|df|du|free|uptime|ps|top|htop)(\\s+.*)?$/": true,
-    }
+    },
+    "terminal.integrated.suggest.enabled": false
 }

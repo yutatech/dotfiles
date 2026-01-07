@@ -76,7 +76,6 @@
     "notebook.output.scrolling": true,
     "C_Cpp.doxygen.generatedStyle": "/**",
     "githubPullRequests.pullBranch": "never",
-
     "python.analysis.extraPaths": [
         "${env:HOME}/Library/Python/3.13/lib/python/site-packages/",
         "${env:HOME}/Library/Python/3.12/lib/python/site-packages/",
@@ -84,5 +83,13 @@
         "${env:HOME}/Library/Python/3.10/lib/python/site-packages/",
         "${env:HOME}/Library/Python/3.9/lib/python/site-packages/",
         "${env:HOME}/Library/Python/3.8/lib/python/site-packages/"
-    ]
+    ],
+    "chat.tools.terminal.autoApprove": {
+        "/^(cat|less|more|head|tail|wc|stat|file|ls|tree)(\\s+.*)?$/": true,
+        "/^git\\s+(status|diff|log|show|branch|tag|grep|blame|remote)(\\s+.*)?$/": true,
+        "/^(make|ninja)\\s+-n(\\s+.*)?$/": true,
+        "/^cmake\\s+.*(--dry-run|-N|--build\\s+.*--target\\s+help).*/": true,
+        "/^(gcc|g\\+\\+|clang|clang\\+\\+|python|python3|node|npm|pip|cargo|git|cmake|make|ninja)\\s+--version$/": true,
+        "/^(pwd|whoami|uname|env|printenv|df|du|free|uptime|ps|top|htop)(\\s+.*)?$/": true,
+    }
 }

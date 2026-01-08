@@ -1,6 +1,3 @@
-[user]
-	name = Yuta Fujiyama
-	email = yuta.technology@gmail.com
 [core]
 	ui = auto
 	quotepath = false
@@ -11,7 +8,11 @@
 [push]
 	autoSetupRemote = true
 	default = current
-[url "git@github.com:"]
-	insteadOf = https://github.com/
 [color]
 	ui = auto
+
+[include]
+	path = ~/dotfiles/git/.gitconfig-yutatech.conf
+
+# [includeIf "hasconfig:remote.*.url:git@gitlab.com:"]
+#     path = ~/dotfiles/git/.gitconfig-gitlab.conf

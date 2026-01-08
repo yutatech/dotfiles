@@ -41,7 +41,8 @@
     },
     "[javascript]": {
         "editor.tabSize": 2,
-        "editor.insertSpaces": true
+        "editor.insertSpaces": true,
+        "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "[xml]": {
         "editor.tabSize": 4,
@@ -90,7 +91,21 @@
         "/^(make|ninja)\\s+-n(\\s+.*)?$/": true,
         "/^cmake\\s+.*(--dry-run|-N|--build\\s+.*--target\\s+help).*/": true,
         "/^(gcc|g\\+\\+|clang|clang\\+\\+|python|python3|node|npm|pip|cargo|git|cmake|make|ninja)\\s+--version$/": true,
-        "/^(pwd|whoami|uname|env|printenv|df|du|free|uptime|ps|top|htop)(\\s+.*)?$/": true,
+        "/^(pwd|whoami|uname|env|printenv|df|du|free|uptime|ps|top|htop)(\\s+.*)?$/": true
     },
-    "terminal.integrated.suggest.enabled": false
+    "terminal.integrated.suggest.enabled": false,
+    "gitlens.ai.model": "vscode",
+    "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+    "accessibility.signals.chatResponseReceived": {
+        "sound": "on"
+    },
+    "accessibility.signals.chatUserActionRequired": {
+        "sound": "on"
+    },
+    "github.copilot.chat.commitMessageGeneration.instructions": [
+        {
+            "text": "write in english"
+        }
+    ],
+    "chat.viewSessions.orientation": "stacked"
 }

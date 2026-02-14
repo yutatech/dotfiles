@@ -1,5 +1,7 @@
 #SingleInstance Force
 
+#HotIf !WinActive("ahk_exe solidworks.exe")
+
 A_HotkeyInterval := 1000
 A_MaxHotkeysPerInterval := 200
 
@@ -51,3 +53,4 @@ hookMButtonUP() {
     isWheelLeft := false
     isWheelRight := false
 }
+#HotIf

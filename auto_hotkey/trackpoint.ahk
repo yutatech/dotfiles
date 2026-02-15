@@ -1,6 +1,6 @@
 #SingleInstance Force
 
-#HotIf !WinActive("ahk_exe solidworks.exe")
+#HotIf !WinActive("ahk_exe sldworks.exe")
 
 A_HotkeyInterval := 1000
 A_MaxHotkeysPerInterval := 200

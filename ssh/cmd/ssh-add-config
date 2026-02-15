@@ -64,7 +64,11 @@ awk -v host="$HOST" -v host_line="$new_host" -v hostname_line="$new_hostname" -v
       print hostname_line
       print user_line
       print identity_line
+<<<<<<< Updated upstream
     }
+=======
+    } 
+>>>>>>> Stashed changes
   }
 ' "$SSH_CONFIG" > "${SSH_CONFIG}.tmp"
 

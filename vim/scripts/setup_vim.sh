@@ -13,7 +13,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # Ubuntuの場合
-  COMMANDS="vim vim-gtk"
+  COMMANDS="vim vim-gtk3"
 
 else
   echo "Unsupported OS. This script supports macOS and Ubuntu only."

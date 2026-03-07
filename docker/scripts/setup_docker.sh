@@ -3,7 +3,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
 
-curl -fsSL https://get.docker.com -o $SCRIPT_DIR/get-docker.sh
+wget -O $SCRIPT_DIR/get-docker.sh https://get.docker.com
 sudo sh $SCRIPT_DIR/get-docker.sh
 rm -f $SCRIPT_DIR/get-docker.sh
 

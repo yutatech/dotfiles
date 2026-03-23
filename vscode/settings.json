@@ -87,11 +87,13 @@
     ],
     "chat.tools.terminal.autoApprove": {
         "/^(cat|less|more|head|tail|wc|stat|file|ls|tree)(\\s+.*)?$/": true,
-        "/^git\\s+(status|diff|log|show|branch|tag|grep|blame|remote)(\\s+.*)?$/": true,
+        "/^git(?:\\s+--?[^\\s]+)*\\s+(status|diff|log|show|branch|tag|grep|blame|remote)(\\s+.*)?$/": true,
         "/^(make|ninja)\\s+-n(\\s+.*)?$/": true,
         "/^cmake\\s+.*(--dry-run|-N|--build\\s+.*--target\\s+help).*/": true,
         "/^(gcc|g\\+\\+|clang|clang\\+\\+|python|python3|node|npm|pip|cargo|git|cmake|make|ninja)\\s+--version$/": true,
-        "/^(pwd|whoami|uname|env|printenv|df|du|free|uptime|ps|top|htop)(\\s+.*)?$/": true
+        "/^(pwd|whoami|uname|env|printenv|df|du|free|uptime|ps|top|htop|find)(\\s+.*)?$/": true,
+        "npm run build": true,
+        "nocorrect": true
     },
     "terminal.integrated.suggest.enabled": false,
     "gitlens.ai.model": "vscode",
@@ -107,5 +109,9 @@
             "text": "write in english"
         }
     ],
-    "chat.viewSessions.orientation": "stacked"
+    "chat.viewSessions.orientation": "stacked",
+    "chat.instructionsFilesLocations": {
+        "~/dotfiles/copilot/instructions": true
+    },
+    "chat.agent.enabled": true
 }

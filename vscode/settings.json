@@ -113,5 +113,6 @@
     "chat.instructionsFilesLocations": {
         "~/dotfiles/copilot/instructions": true
     },
-    "chat.agent.enabled": true
+    "chat.agent.enabled": true,
+    "scm.defaultViewMode": "tree"
 }

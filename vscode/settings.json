@@ -93,7 +93,8 @@
         "/^(gcc|g\\+\\+|clang|clang\\+\\+|python|python3|node|npm|pip|cargo|git|cmake|make|ninja)\\s+--version$/": true,
         "/^(pwd|whoami|uname|env|printenv|df|du|free|uptime|ps|top|htop|find)(\\s+.*)?$/": true,
         "npm run build": true,
-        "nocorrect": true
+        "nocorrect": true,
+        "./.venv/bin/python": true
     },
     "terminal.integrated.suggest.enabled": false,
     "gitlens.ai.model": "vscode",
@@ -114,5 +115,14 @@
         "~/dotfiles/copilot/instructions": true
     },
     "chat.agent.enabled": true,
-    "scm.defaultViewMode": "tree"
+    "scm.defaultViewMode": "tree",
+    "accessibility.signals.terminalBell": {
+        "sound": "on"
+    },
+    "[latex]": {
+        "editor.defaultFormatter": "nickfode.latex-formatter"
+    },
+    "idf.hasWalkthroughBeenShown": true,
+    "C_Cpp.default.compilerPath": "",
+    "workbench.colorTheme": "Dark Modern"
 }

@@ -124,5 +124,8 @@
     },
     "idf.hasWalkthroughBeenShown": true,
     "C_Cpp.default.compilerPath": "",
-    "workbench.colorTheme": "Dark Modern"
+    "workbench.colorTheme": "Dark Modern",
+    "files.associations": {
+        "*.mjcf": "xml"
+    }
 }

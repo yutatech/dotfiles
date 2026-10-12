@@ -14,6 +14,43 @@ file_exists() {
   return 0
 }
 
+if [[ "$OSTYPE" == msys* || "$OSTYPE" == mingw* || "$OSTYPE" == cygwin* ]]; then
+  wget() {
+    local -a curl_args=(--location --fail --silent --show-error)
+    local -a urls=()
+
+    while (($#)); do
+      case "$1" in
+        -q)
+          shift
+          ;;
+        -qO-|-O-)
+          curl_args+=(--output -)
+          shift
+          ;;
+        -O)
+          if (($# < 2)); then
+            echo "wget: option -O requires a file name" >&2
+            return 2
+          fi
+          curl_args+=(--output "$2")
+          shift 2
+          ;;
+        -*)
+          curl_args+=("$1")
+          shift
+          ;;
+        *)
+          urls+=("$1")
+          shift
+          ;;
+      esac
+    done
+
+    command curl.exe "${curl_args[@]}" "${urls[@]}"
+  }
+fi
+
 symlink_exists() {
   local symlinks=$@
 
@@ -89,10 +126,13 @@ check_and_install_commands() {
 
   for command in $commands; do
     if ! command -v $command > /dev/null 2>&1; then
-      echo "Installing $command..."
       if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "Installing $command..."
         brew install $command
+      elif [[ "$OSTYPE" == msys* || "$OSTYPE" == mingw* || "$OSTYPE" == cygwin* ]]; then
+        echo "Automatic installation is not supported in Git Bash; skipping: $command"
       else
+        echo "Installing $command..."
         sudo apt install $command -y
       fi
     fi
@@ -107,6 +147,11 @@ check_and_install_apt_pkgs() {
   fi
 
   for pkg in $pkgs; do
+    if [[ "$OSTYPE" == msys* || "$OSTYPE" == mingw* || "$OSTYPE" == cygwin* ]]; then
+      echo "Automatic package installation is not supported in Git Bash; skipping: $pkg"
+      continue
+    fi
+
     if ! apt show $pkg > /dev/null 2>&1; then
       echo "Installing $pkg..."
       sudo apt install $pkg -y
@@ -124,6 +169,11 @@ check_and_install_brew_pkgs() {
   fi
 
   for pkg in $pkgs; do
+    if [[ "$OSTYPE" == msys* || "$OSTYPE" == mingw* || "$OSTYPE" == cygwin* ]]; then
+      echo "Automatic package installation is not supported in Git Bash; skipping: $pkg"
+      continue
+    fi
+
     if ! brew info $pkg > /dev/null 2>&1; then
       echo "Installing $pkg..."
       brew install $pkg -y

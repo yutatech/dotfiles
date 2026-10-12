@@ -3,9 +3,9 @@ chrome() {
   read answer
   if [ "$answer" = "y" ]; then
     local SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
-    local REPO_DIR="$(cd "$SCRIPT_DIR" && git rev-parse --show-toplevel 2>/dev/null)"
-    $REPO_DIR/chrome/scripts/setup_chrome.sh
+    local DOTFILES_REPO_DIR="$(cd "$SCRIPT_DIR" && git rev-parse --show-toplevel 2>/dev/null)"
+    $DOTFILES_REPO_DIR/chrome/scripts/setup_chrome.sh
     unset -f chrome 2>/dev/null
-    source $REPO_DIR/chrome/chrome.sh
+    source $DOTFILES_REPO_DIR/chrome/chrome.sh
   fi
 }

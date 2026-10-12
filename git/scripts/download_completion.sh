@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
+source $DOTFILES_REPO_DIR/setup_utils/utils.sh
 
 mkdir -p $SCRIPT_DIR/../completion
 

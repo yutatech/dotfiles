@@ -4,6 +4,6 @@ export ROSCONSOLE_FORMAT=[${severity}][${time}][${node}:${logger}]: ${message}
 
 
 if [ -n "${ZSH_VERSION}" ]; then
-    export PATH="$REPO_DIR/ros2/cmd:$PATH"
-    fpath=($REPO_DIR/ros2/comp $fpath)
+    export PATH="$DOTFILES_REPO_DIR/ros2/cmd:$PATH"
+    fpath=($DOTFILES_REPO_DIR/ros2/comp $fpath)
 fi

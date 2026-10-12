@@ -2,7 +2,7 @@
 # gh (GitHub CLI) configuration
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
-source $REPO_DIR/setup_utils/utils.sh
+source $DOTFILES_REPO_DIR/setup_utils/utils.sh
 
 SOURCE_FILES=""
 

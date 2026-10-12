@@ -1,7 +1,7 @@
 # zmodload zsh/zprof
 
 MY_CONFIGURATION_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
-REPO_DIR=$MY_CONFIGURATION_DIR
+export DOTFILES_REPO_DIR=$MY_CONFIGURATION_DIR
 
 source $MY_CONFIGURATION_DIR/bash/bash.sh
 source $MY_CONFIGURATION_DIR/git/git.sh
@@ -54,7 +54,5 @@ fi
 source $MY_CONFIGURATION_DIR/git/git_comp.sh
 source $MY_CONFIGURATION_DIR/ros2/ros2_comp.sh
 source $MY_CONFIGURATION_DIR/proxy/proxy.sh
-
-unset REPO_DIR
 
 # zprof

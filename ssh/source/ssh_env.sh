@@ -1,8 +1,8 @@
 # 自作サブコマンド
-export PATH="$REPO_DIR/ssh/cmd:$PATH"
+export PATH="$DOTFILES_REPO_DIR/ssh/cmd:$PATH"
 
 if [ -n "${ZSH_VERSION}" ]; then
-    fpath=($REPO_DIR/ssh/comp $fpath)
+    fpath=($DOTFILES_REPO_DIR/ssh/comp $fpath)
 elif [ -n "${BASH_VERSION}" ]; then
     _ssh_add_config() {
         local cur prev

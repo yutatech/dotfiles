@@ -2,13 +2,13 @@
 set -e
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-REPO_DIR=$(cd $SCRIPT_DIR && git rev-parse --show-toplevel 2>/dev/null)
-source $REPO_DIR/setup_utils/utils.sh
+DOTFILES_REPO_DIR=$(cd $SCRIPT_DIR && git rev-parse --show-toplevel 2>/dev/null)
+source $DOTFILES_REPO_DIR/setup_utils/utils.sh
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # Ubuntuの場合
   sudo apt reinstall refind -y
-  sudo cp $REPO_DIR/refind/refind.conf /boot/efi/EFI/refind/refind.conf
+  sudo cp $DOTFILES_REPO_DIR/refind/refind.conf /boot/efi/EFI/refind/refind.conf
   if sudo [ -e "/boot/efi/EFI/refind/themes/brads-refind-theme/theme.conf" ]; then
     echo "Pull refind theme"
     sudo git -C /boot/efi/EFI/refind/themes/brads-refind-theme pull

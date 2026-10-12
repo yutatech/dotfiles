@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
+ENVIRONMENT="$(uname -s)"
 
-parent_shell=$(ps -o comm= -p "$PPID" | awk -F'/' '{print $NF}')
+case "$ENVIRONMENT" in
+    MINGW*|MSYS*)
+        parent_shell=bash
+        ;;
+    *)
+        parent_shell=$(ps -o comm= -p "$PPID" | awk -F'/' '{print $NF}')
+        ;;
+esac
+
 
 if [ $parent_shell = bash ]; then
   # bashの場合

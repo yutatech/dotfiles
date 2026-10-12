@@ -1,5 +1,5 @@
 MY_CONFIGURATION_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
-REPO_DIR=$MY_CONFIGURATION_DIR
+export DOTFILES_REPO_DIR=$MY_CONFIGURATION_DIR
 
 source $MY_CONFIGURATION_DIR/zsh/zsh.sh
 source $MY_CONFIGURATION_DIR/bash/bash.sh
@@ -20,5 +20,3 @@ source $MY_CONFIGURATION_DIR/docker/docker.sh
 source $MY_CONFIGURATION_DIR/direnv/direnv.sh
 
 source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
-
-unset REPO_DIR

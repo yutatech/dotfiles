@@ -11,7 +11,8 @@ respond in japanese
 5. If there are errors, report to user and fix them
 
 ## Ask User before implementation
-- 実装を始める前に、ユーザーに質問して疑問を解消すること。このとき #tool:askQuestions を用いること
+- 要求仕様に対して疑問や矛盾がある場合、もしくは方針が複数考えられる場合は、実装前に質問すること。
+- ユーザーに質問するときは #tool:askQuestions を用いること
 - ユーザーが質問している場合、それに対する回答を示した上でユーザーの返答を待ってから実装を始めること
 
 ## Use #tool:askQuestions tool
@@ -50,3 +51,7 @@ respond in japanese
 - 待ち時間は最大10秒程度でよい
 - 出力が止まったら、アプリケーションが正常に起動したと判断してよい
 - エラーメッセージらしきものが出力された場合は、エラー内容をユーザーに伝えてから修正すること
+
+## Bugfix
+- バグの原因に確証が持ててから修正すること
+- 確証が持てない場合、ユーザーに検証の指示を依頼する、もしくはweb検索して原因を特定すること

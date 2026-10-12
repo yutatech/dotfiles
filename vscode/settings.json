@@ -21,7 +21,7 @@
         "editor.rulers": [
             80
         ],
-        "editor.defaultFormatter": "ms-vscode.cpptools"
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
     },
     "[python]": {
         "editor.tabSize": 4,
@@ -37,7 +37,8 @@
     },
     "[html]": {
         "editor.tabSize": 4,
-        "editor.insertSpaces": true
+        "editor.insertSpaces": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[javascript]": {
         "editor.tabSize": 2,
@@ -94,11 +95,17 @@
         "/^(pwd|whoami|uname|env|printenv|df|du|free|uptime|ps|top|htop|find)(\\s+.*)?$/": true,
         "npm run build": true,
         "nocorrect": true,
-        "./.venv/bin/python": true
+        "./.venv/bin/python": true,
+        "/^node --check .*/": true,
+        "/^node -e .*/": true,
+        "command": true,
+        "rsvg-convert": true,
+        "sips": true
+    },
+    "chat.tools.urls.autoApprove": {
+        "*": true
     },
     "terminal.integrated.suggest.enabled": false,
-    "gitlens.ai.model": "vscode",
-    "gitlens.ai.vscode.model": "copilot:gpt-4.1",
     "accessibility.signals.chatResponseReceived": {
         "sound": "on"
     },
@@ -127,5 +134,10 @@
     "workbench.colorTheme": "Dark Modern",
     "files.associations": {
         "*.mjcf": "xml"
+    "git.replaceTagsWhenPull": true,
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "github.copilot.enable": {
+        "markdown": true,
+        "cpp": true
     }
 }

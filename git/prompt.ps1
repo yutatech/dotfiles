@@ -64,3 +64,16 @@ function Get-GitPromptStatus {
 
     return "($branch$flags)"
 }
+
+function Write-GitPromptStatus {
+    $gitStatus = Get-GitPromptStatus
+    if (-not $gitStatus) { return }
+
+    $columns = $Host.UI.RawUI.WindowSize.Width
+    $column = $columns - $gitStatus.Length + 1
+    if ($column -lt 1) { $column = 1 }
+
+    Write-Host "`e[${column}G" -NoNewline
+    Write-Host "`e[1;32m$gitStatus`e[0m" -NoNewline
+    Write-Host "`e[1G" -NoNewline
+}

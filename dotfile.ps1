@@ -72,6 +72,12 @@ function Get-GitPromptStatus {
 
 # ===== プロンプト本体 =====
 function prompt {
+    $venv = ""
+
+    if ($env:VIRTUAL_ENV) {
+        $venv = "($(Split-Path $env:VIRTUAL_ENV -Leaf)) "
+    }
+
     $isAdmin = ([Security.Principal.WindowsPrincipal] `
         [Security.Principal.WindowsIdentity]::GetCurrent()
     ).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -96,9 +102,11 @@ function prompt {
         Write-Host "`e[1G" -NoNewline
     }
 
+    Write-Host "$venv" -NoNewline
     Write-Host "$userName@$computerName" -ForegroundColor Green -NoNewline
     Write-Host ':' -NoNewline
     Write-Host $currentPath -ForegroundColor Blue -NoNewline
+
 
     return "$symbol "
 }
@@ -110,4 +118,3 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
     $PSStyle.FileInfo.SymbolicLink = "`e[36m"
 }
 
-$env:Path += "C:\Users\0000412398\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Python 3.13"

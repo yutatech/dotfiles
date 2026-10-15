@@ -94,9 +94,10 @@
         "/^(gcc|g\\+\\+|clang|clang\\+\\+|python|python3|node|npm|pip|cargo|git|cmake|make|ninja)\\s+--version$/": true,
         "/^(pwd|whoami|uname|env|printenv|df|du|free|uptime|ps|top|htop|find|hostname|ipconfig|timeout|ping)(\\s+.*)?$/": true,
         "npm run build": true,
-        ".*python -c .*": true,
+        ".*python -c.*": true,
+        ".*python.exe -c.*": true,
+        ".*python -m py_compile.*": true,
         "nocorrect": true,
-        "./.venv/bin/python": true,
         "/^Get-.*$/": true,
         "/^Get-.*\\|.*$/": true,
         "/^Select-.*/": true,
@@ -154,10 +155,10 @@
     "workbench.colorTheme": "Dark Modern",
     "files.associations": {
         "*.mjcf": "xml"
+    },
     "git.replaceTagsWhenPull": true,
     "C_Cpp.intelliSenseEngine": "disabled",
     "github.copilot.enable": {
-        "markdown": true,
-        "cpp": true
+        "*": true
     }
 }

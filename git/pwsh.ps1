@@ -3,16 +3,6 @@
 $global:DotfilesGitExecutable = Get-Command git -CommandType Application -ErrorAction SilentlyContinue |
     Select-Object -First 1
 
-function Test-DotfilesFileContentsEqual {
-    param(
-        [Parameter(Mandatory)][string]$FirstPath,
-        [Parameter(Mandatory)][string]$SecondPath
-    )
-
-    return (Get-FileHash -LiteralPath $FirstPath -Algorithm SHA256).Hash -ceq
-        (Get-FileHash -LiteralPath $SecondPath -Algorithm SHA256).Hash
-}
-
 function Test-DotfilesGitConfiguration {
     if (-not $global:DotfilesGitExecutable) { return $false }
 
@@ -26,12 +16,8 @@ function Test-DotfilesGitConfiguration {
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { return $false }
     }
 
-    if (-not (Test-DotfilesFileContentsEqual $userGitConfig $gitConfig)) {
-        return $false
-    }
-    if (-not (Test-DotfilesFileContentsEqual $userGlobalIgnore $globalIgnore)) {
-        return $false
-    }
+    if (-not (Test-DotfilesHardLink $userGitConfig $gitConfig)) { return $false }
+    if (-not (Test-DotfilesHardLink $userGlobalIgnore $globalIgnore)) { return $false }
 
     $gitExecutable = $global:DotfilesGitExecutable.Source
     $configuredIgnore = @(& $gitExecutable config --global --path core.excludesfile 2>$null)

@@ -1,5 +1,24 @@
 # git
 
+## PowerShell
+
+`dotfile.ps1` をプロファイルから読み込むと、次のサブコマンドが利用できます。
+
+- `git graph [log の引数...]`: 全ブランチのコミットグラフを表示
+- `git fixup <commit>`: ステージ済み変更で fixup コミットを作成し、autosquash
+  （履歴を書き換えるため、共有済みコミットでは注意）
+- `git clear`: fetch/prune 後、既定ブランチにマージ済みのローカルブランチを削除。
+  `main`、`master`、現在のブランチは保持
+
+実装は `git/cmd/git-*.ps1`、Tab 補完は `git/comp/git.ps1` にあります。
+サブコマンド名と `git fixup` の直近20件のコミットハッシュ（件名付き）を補完します。
+通常の Git 引数は Git 本体へ渡し、既存の設定未完了時のセットアップ確認も維持します。
+PowerShell の関数経由の `git` が対象で、`git.exe` を直接実行した場合は
+独自サブコマンドの振り分けとセットアップ確認を行いません。
+
+検証は `pwsh -NoProfile -File .\git\tests\pwsh.ps1` で実行できます。
+一時リポジトリで履歴操作と補完を確認し、実際のユーザー設定は変更しません。
+
 ## サブコマンドの作り方
 1. `git/cmd/git-cmd`にサブコマンドの中身を実装
 2. `git/cmd/git-cmd`に実行権限を付与

@@ -20,4 +20,4 @@ source $DOTFILES_REPO_DIR/direnv/direnv.sh
 
 source $DOTFILES_REPO_DIR/setup_utils/unset_vars.sh
 
-source "$DOTFILES_REPO_DIR/dotfiles/update.sh"
+source $DOTFILES_REPO_DIR/dotfiles/update.sh

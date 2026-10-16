@@ -20,3 +20,5 @@ source $MY_CONFIGURATION_DIR/docker/docker.sh
 source $MY_CONFIGURATION_DIR/direnv/direnv.sh
 
 source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
+
+source "$DOTFILES_REPO_DIR/dotfiles/update.sh"

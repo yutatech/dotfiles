@@ -56,3 +56,5 @@ source $MY_CONFIGURATION_DIR/ros2/ros2_comp.sh
 source $MY_CONFIGURATION_DIR/proxy/proxy.sh
 
 # zprof
+
+source "$DOTFILES_REPO_DIR/dotfiles/update.sh"

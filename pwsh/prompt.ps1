@@ -17,6 +17,9 @@ function prompt {
         $currentPath = '~' + $currentPath.Substring($homePath.Length)
     }
 
+    if (Get-Command Write-DotfilesUpdateStatus -ErrorAction SilentlyContinue) {
+        Write-DotfilesUpdateStatus
+    }
     Write-GitPromptStatus
 
     Write-Host $venv -NoNewline

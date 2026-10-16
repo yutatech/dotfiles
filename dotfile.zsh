@@ -1,32 +1,31 @@
 # zmodload zsh/zprof
 
-MY_CONFIGURATION_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
-export DOTFILES_REPO_DIR=$MY_CONFIGURATION_DIR
+export DOTFILES_REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")" && pwd)"
 
-source $MY_CONFIGURATION_DIR/bash/bash.sh
-source $MY_CONFIGURATION_DIR/git/git.sh
-source $MY_CONFIGURATION_DIR/gh/gh.sh
-source $MY_CONFIGURATION_DIR/tmux/tmux.sh
-source $MY_CONFIGURATION_DIR/vscode/vscode.sh
-source $MY_CONFIGURATION_DIR/ros2/ros2.sh
-source $MY_CONFIGURATION_DIR/zsh/zsh.sh
-source $MY_CONFIGURATION_DIR/fcitx5/fcitx5.sh
-source $MY_CONFIGURATION_DIR/vim/vim.sh
-source $MY_CONFIGURATION_DIR/refind/refind.sh
-source $MY_CONFIGURATION_DIR/chrome/chrome.sh
-source $MY_CONFIGURATION_DIR/ssh/ssh.sh
-source $MY_CONFIGURATION_DIR/terminal/terminal.sh
-source $MY_CONFIGURATION_DIR/docker/docker.sh
-source $MY_CONFIGURATION_DIR/direnv/direnv.sh
+source $DOTFILES_REPO_DIR/bash/bash.sh
+source $DOTFILES_REPO_DIR/git/git.sh
+source $DOTFILES_REPO_DIR/gh/gh.sh
+source $DOTFILES_REPO_DIR/tmux/tmux.sh
+source $DOTFILES_REPO_DIR/vscode/vscode.sh
+source $DOTFILES_REPO_DIR/ros2/ros2.sh
+source $DOTFILES_REPO_DIR/zsh/zsh.sh
+source $DOTFILES_REPO_DIR/fcitx5/fcitx5.sh
+source $DOTFILES_REPO_DIR/vim/vim.sh
+source $DOTFILES_REPO_DIR/refind/refind.sh
+source $DOTFILES_REPO_DIR/chrome/chrome.sh
+source $DOTFILES_REPO_DIR/ssh/ssh.sh
+source $DOTFILES_REPO_DIR/terminal/terminal.sh
+source $DOTFILES_REPO_DIR/docker/docker.sh
+source $DOTFILES_REPO_DIR/direnv/direnv.sh
 
-source $MY_CONFIGURATION_DIR/setup_utils/unset_vars.sh
+source $DOTFILES_REPO_DIR/setup_utils/unset_vars.sh
 
 ######## compinit ##########
 # 補完機能を有効にする
 autoload -Uz compinit
 
 ZCOMP_CACHEDUMP="$HOME/.zcompdump"
-ZCOMP_HASHFILE="$MY_CONFIGURATION_DIR/.zcompdump_fpath_hash"
+ZCOMP_HASHFILE="$DOTFILES_REPO_DIR/.zcompdump_fpath_hash"
 
 autoload -Uz compinit
 
@@ -51,9 +50,9 @@ fi
 ######## compinit ##########
 
 
-source $MY_CONFIGURATION_DIR/git/git_comp.sh
-source $MY_CONFIGURATION_DIR/ros2/ros2_comp.sh
-source $MY_CONFIGURATION_DIR/proxy/proxy.sh
+source $DOTFILES_REPO_DIR/git/git_comp.sh
+source $DOTFILES_REPO_DIR/ros2/ros2_comp.sh
+source $DOTFILES_REPO_DIR/proxy/proxy.sh
 
 # zprof
 

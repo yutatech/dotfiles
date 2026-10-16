@@ -56,4 +56,4 @@ source $DOTFILES_REPO_DIR/proxy/proxy.sh
 
 # zprof
 
-source "$DOTFILES_REPO_DIR/dotfiles/update.sh"
+source $DOTFILES_REPO_DIR/dotfiles/update.sh

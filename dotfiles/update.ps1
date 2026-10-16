@@ -1,7 +1,5 @@
 param([switch]$NoCheck)
 
-. (Join-Path $PSScriptRoot 'scripts\dotfiles_update.ps1')
-
 $commandDirectory = Join-Path $env:DOTFILES_REPO_DIR 'dotfiles\cmd'
 if (($env:PATH -split [IO.Path]::PathSeparator) -notcontains $commandDirectory) {
     $env:PATH = $commandDirectory + [IO.Path]::PathSeparator + $env:PATH
@@ -9,6 +7,7 @@ if (($env:PATH -split [IO.Path]::PathSeparator) -notcontains $commandDirectory) 
 
 function global:dotfiles-update {
     try {
+        . (Join-Path $env:DOTFILES_REPO_DIR 'dotfiles\scripts\dotfiles_update.ps1')
         if (-not (Invoke-DotfilesUpdate $env:DOTFILES_REPO_DIR)) {
             Write-Host 'dotfiles: main is up to date.'
             return
@@ -30,23 +29,59 @@ function global:dotfiles-update {
     catch { Write-Error "dotfiles: $($_.Exception.Message)" }
 }
 
+function global:Start-DotfilesUpdateCheck {
+    param([string]$Repository, [string]$ScriptPath)
+
+    $executable = Join-Path $PSHOME $(if ($IsWindows) { 'pwsh.exe' } else { 'pwsh' })
+    $startInfo = [Diagnostics.ProcessStartInfo]::new($executable)
+    $startInfo.UseShellExecute = $false
+    $startInfo.CreateNoWindow = $true
+    $startInfo.RedirectStandardInput = $true
+    $startInfo.RedirectStandardOutput = $true
+    $startInfo.RedirectStandardError = $true
+    foreach ($argument in @('-NoLogo', '-NoProfile', '-NonInteractive', '-File', $ScriptPath, '-CheckRepository', $Repository)) {
+        $startInfo.ArgumentList.Add($argument)
+    }
+    $process = [Diagnostics.Process]::new()
+    $process.StartInfo = $startInfo
+    try {
+        $null = $process.Start()
+        $process.StandardInput.Close()
+        [pscustomobject]@{
+            State = 'checking'; Handled = $false; Detail = ''; Target = ''
+            Process = $process
+            OutputTask = $process.StandardOutput.ReadToEndAsync()
+            ErrorTask = $process.StandardError.ReadToEndAsync()
+        }
+    }
+    catch { $process.Dispose(); throw }
+}
+
 function global:Write-DotfilesUpdateStatus {
     if (-not $global:DotfilesUpdateSession) { return }
     $previousExitCode = $global:LASTEXITCODE
     try {
         $session = $global:DotfilesUpdateSession
-        if ($session.Job -and $session.Job.State -in @('Completed', 'Failed', 'Stopped')) {
-            $result = @(Receive-Job $session.Job -ErrorAction SilentlyContinue)
-            Remove-Job $session.Job -Force
-            $session.Job = $null
-            if ($result.Count -gt 0 -and $result[-1].State) {
-                $session.State = $result[-1].State
-                $session.Detail = $result[-1].Detail
-                $session.Target = $result[-1].Target
+        if ($session.Process -and $session.Process.HasExited -and $session.OutputTask.IsCompleted -and $session.ErrorTask.IsCompleted) {
+            try {
+                $result = $session.OutputTask.GetAwaiter().GetResult() | ConvertFrom-Json -ErrorAction Stop
+                if (-not $result.State -or $session.Process.ExitCode -ne 0) { throw 'Background check failed.' }
+                $session.State = $result.State
+                $session.Detail = $result.Detail
+                $session.Target = $result.Target
             }
-            else { $session.State = 'error'; $session.Detail = 'Background check failed.' }
+            catch { $session.State = 'error'; $session.Detail = 'Background check failed.' }
+            finally {
+                $session.Process.Dispose()
+                $session.Process = $null
+                $session.OutputTask = $null
+                $session.ErrorTask = $null
+            }
         }
         if ($session.State -eq 'available') {
+            if (-not (Test-Path Function:Invoke-DotfilesGit)) {
+                . (Join-Path $env:DOTFILES_REPO_DIR 'dotfiles\scripts\dotfiles_update.ps1')
+            }
             $alreadyUpdated = Invoke-DotfilesGit $env:DOTFILES_REPO_DIR @('merge-base', '--is-ancestor', $session.Target, 'refs/heads/main')
             if ($alreadyUpdated.ExitCode -eq 0) { $session.State = 'current'; return }
             Write-Host '[main update available]' -ForegroundColor Yellow
@@ -72,15 +107,13 @@ $nonInteractive = $commandLine | Where-Object { $_ -match '^-(NonI(nteractive)?|
 $noExit = $commandLine | Where-Object { $_ -eq '-NoExit' }
 if (-not $NoCheck -and -not $global:DotfilesUpdateSession -and
     (-not $nonInteractive -or $noExit) -and -not [Console]::IsInputRedirected -and -not [Console]::IsOutputRedirected) {
-    $global:DotfilesUpdateSession = [pscustomobject]@{
-        State = 'checking'; Handled = $false; Detail = ''; Target = ''; Job = $null
+    try {
+        $global:DotfilesUpdateSession = Start-DotfilesUpdateCheck $env:DOTFILES_REPO_DIR (Join-Path $env:DOTFILES_REPO_DIR 'dotfiles\scripts\dotfiles_update.ps1')
     }
-    $global:DotfilesUpdateSession.Job = Start-Job -ScriptBlock {
-        param($scriptPath, $repository)
-        try {
-            . $scriptPath
-            Get-DotfilesUpdateState $repository
+    catch {
+        $global:DotfilesUpdateSession = [pscustomobject]@{
+            State = 'error'; Handled = $false; Detail = $_.Exception.Message; Target = ''
+            Process = $null; OutputTask = $null; ErrorTask = $null
         }
-        catch { [pscustomobject]@{ State = 'error'; Detail = $_.Exception.Message } }
-    } -ArgumentList (Join-Path $env:DOTFILES_REPO_DIR 'dotfiles\scripts\dotfiles_update.ps1'), $env:DOTFILES_REPO_DIR
+    }
 }

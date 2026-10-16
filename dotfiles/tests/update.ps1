@@ -24,7 +24,7 @@ function Invoke-TestGit {
     $output
 }
 
-. (Join-Path $repoRoot 'dotfiles/scripts/dotfiles_update.ps1')
+$engineScript = Join-Path $repoRoot 'dotfiles/scripts/dotfiles_update.ps1'
 
 function Get-TestState {
     param([string]$Repository)
@@ -37,11 +37,16 @@ function Get-TestState {
 function Invoke-TestUpdate {
     param([string]$Repository)
     if ($script:engine -eq 'PowerShell') {
-        try { $null = Invoke-DotfilesUpdate $Repository; return $true }
+        try {
+            $records = @(Invoke-DotfilesUpdate $Repository 6>&1)
+            $script:updateLog = ($records | Where-Object { $_ -is [Management.Automation.InformationRecord] }) -join "`n"
+            return $true
+        }
         catch { return $false }
     }
     $env:DOTFILES_REPO_DIR = $Repository
-    & $bashExecutable $shellEngine update >$null 2>$null
+    $records = @(& $bashExecutable $shellEngine update 2>&1)
+    $script:updateLog = $records -join "`n"
     return $LASTEXITCODE -eq 0
 }
 
@@ -58,6 +63,14 @@ try {
     $env:GIT_CONFIG_GLOBAL = Join-Path $testRoot 'config'
     $env:GIT_CONFIG_NOSYSTEM = '1'
     Set-Content $env:GIT_CONFIG_GLOBAL "[user]`n name = Dotfiles Test`n email = test@example.invalid`n[commit]`n gpgsign = false`n[core]`n autocrlf = false"
+    $env:DOTFILES_REPO_DIR = $repoRoot
+    . (Join-Path $repoRoot 'dotfiles/update.ps1') -NoCheck
+    Assert-Test (-not (Test-Path Function:Invoke-DotfilesGit)) 'Update engine was loaded eagerly.'
+    . $engineScript
+    $records = @(Invoke-DotfilesGit $repoRoot @('--version') -ShowOutput 6>&1)
+    Assert-Test (($records | Where-Object { $_ -is [Management.Automation.InformationRecord] }) -match 'git version') 'Git stdout was not displayed.'
+    $records = @(Invoke-DotfilesGit $repoRoot @('not-a-real-subcommand') -ShowOutput 6>&1)
+    Assert-Test (($records | Where-Object { $_ -is [Management.Automation.InformationRecord] }) -match 'not-a-real-subcommand') 'Git stderr was not displayed.'
     $shellEngine = (Join-Path $repoRoot 'dotfiles/scripts/dotfiles_update.sh').Replace('\', '/')
     $engines = @('PowerShell')
     if ($bashExecutable) { $engines += 'bash' }
@@ -89,20 +102,16 @@ try {
             . (Join-Path $repoRoot 'dotfiles/update.ps1') -NoCheck
             $script:confirmationCount = 0
             function Read-Host { param([string]$Prompt); $script:confirmationCount++; 'N' }
-            $global:DotfilesUpdateSession = [pscustomobject]@{
-                State = 'checking'; Handled = $false; Detail = ''; Target = ''
-                Job = Start-Job -ScriptBlock {
-                    param($scriptPath, $repository)
-                    . $scriptPath
-                    Get-DotfilesUpdateState $repository
-                } -ArgumentList (Join-Path $repoRoot 'dotfiles/scripts/dotfiles_update.ps1'), $local
-            }
-            $null = Wait-Job $global:DotfilesUpdateSession.Job -Timeout 20
+            $global:DotfilesUpdateSession = Start-DotfilesUpdateCheck $local $engineScript
+            Assert-Test ($global:DotfilesUpdateSession.State -eq 'checking') 'Check did not start asynchronously.'
+            Assert-Test (@(Get-Job).Count -eq 0) 'Background check created a PowerShell job.'
+            Assert-Test ($global:DotfilesUpdateSession.Process.WaitForExit(20000)) 'Background check timed out.'
+            [Threading.Tasks.Task]::WaitAll([Threading.Tasks.Task[]]@($global:DotfilesUpdateSession.OutputTask, $global:DotfilesUpdateSession.ErrorTask))
             Write-DotfilesUpdateStatus
             Write-DotfilesUpdateStatus
             Assert-Test ($script:confirmationCount -eq 1) 'PowerShell confirmation was not session-scoped.'
             Assert-Test ($global:DotfilesUpdateSession.State -eq 'available') 'Declining cleared the update marker.'
-            Assert-Test ($null -eq $global:DotfilesUpdateSession.Job) 'Background job was not cleaned up.'
+            Assert-Test ($null -eq $global:DotfilesUpdateSession.Process) 'Background process was not cleaned up.'
             $updateFunction = (Get-Item Function:dotfiles-update).ScriptBlock
             $script:acceptedUpdates = 0
             function dotfiles-update { $script:acceptedUpdates++ }
@@ -169,6 +178,8 @@ _dotfiles_update_prompt
         Assert-Test ((Invoke-TestGit $local rev-parse main) -eq $before) "${engine}: refused update changed main."
         $null = Invoke-TestGit $local restore sample.txt
         Assert-Test (Invoke-TestUpdate $local) "${engine}: clean fast-forward failed."
+        Assert-Test ($script:updateLog -match 'Fast-forward') "${engine}: fast-forward output was not displayed."
+        Assert-Test ($script:updateLog -match 'up to date|upstream/main') "${engine}: fetch output was not displayed."
         Assert-Test ((Get-TestState $local) -eq 'current') "${engine}: update did not reach upstream."
         if ($engine -eq 'PowerShell') {
             Write-DotfilesUpdateStatus
@@ -211,17 +222,20 @@ _dotfiles_update_prompt
     }
 
     $reloadRoot = Join-Path $testRoot 'reload'
-    $null = New-Item -ItemType Directory $reloadRoot
+    $null = New-Item -ItemType Directory (Join-Path $reloadRoot 'dotfiles/scripts') -Force
     Set-Content (Join-Path $reloadRoot 'dotfile.ps1') 'function Test-DotfilesReloaded { return "reloaded" }'
+    Set-Content (Join-Path $reloadRoot 'dotfiles/scripts/dotfiles_update.ps1') 'function Invoke-DotfilesUpdate { return $true }'
     $env:DOTFILES_REPO_DIR = $reloadRoot
-    function Invoke-DotfilesUpdate { return $true }
     dotfiles-update
     Assert-Test ((Test-DotfilesReloaded) -eq 'reloaded') 'Reloaded functions did not persist after returning.'
     Remove-Item Function:Test-DotfilesReloaded
     'PASS: PowerShell configuration reload persists after the update function returns.'
 }
 finally {
-    if ($global:DotfilesUpdateSession.Job) { $global:DotfilesUpdateSession.Job | Remove-Job -Force }
+    if ($global:DotfilesUpdateSession.Process) {
+        if (-not $global:DotfilesUpdateSession.Process.HasExited) { $global:DotfilesUpdateSession.Process.Kill($true) }
+        $global:DotfilesUpdateSession.Process.Dispose()
+    }
     foreach ($name in $previousEnvironment.Keys) {
         [Environment]::SetEnvironmentVariable($name, $previousEnvironment[$name])
     }

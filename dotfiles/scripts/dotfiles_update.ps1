@@ -1,5 +1,7 @@
+param([string]$CheckRepository)
+
 function Invoke-DotfilesGit {
-    param([string]$Repository, [string[]]$Arguments)
+    param([string]$Repository, [string[]]$Arguments, [switch]$ShowOutput)
 
     $executable = Get-Command git -CommandType Application -ErrorAction Stop | Select-Object -First 1
     $startInfo = [System.Diagnostics.ProcessStartInfo]::new($executable.Source)
@@ -21,15 +23,50 @@ function Invoke-DotfilesGit {
     try {
         $null = $process.Start()
         $process.StandardInput.Close()
-        $outputTask = $process.StandardOutput.ReadToEndAsync()
-        $errorTask = $process.StandardError.ReadToEndAsync()
-        $finished = $process.WaitForExit(10000)
+        $outputText = ''
+        $errorText = ''
+        if ($ShowOutput) {
+            $timer = [Diagnostics.Stopwatch]::StartNew()
+            $streams = @(
+                @{ Reader = $process.StandardOutput; Task = $process.StandardOutput.ReadLineAsync(); Text = [Text.StringBuilder]::new() }
+                @{ Reader = $process.StandardError; Task = $process.StandardError.ReadLineAsync(); Text = [Text.StringBuilder]::new() }
+            )
+            $finished = $true
+            while ($pending = @($streams | Where-Object { $null -ne $_.Task })) {
+                $remaining = [int][Math]::Max(0, 10000 - $timer.ElapsedMilliseconds)
+                $tasks = [Threading.Tasks.Task[]]@($pending | ForEach-Object { $_.Task })
+                if ($remaining -eq 0 -or [Threading.Tasks.Task]::WaitAny($tasks, $remaining) -eq -1) {
+                    $finished = $false
+                    break
+                }
+                foreach ($stream in $pending) {
+                    if (-not $stream.Task.IsCompleted) { continue }
+                    $line = $stream.Task.GetAwaiter().GetResult()
+                    if ($null -eq $line) { $stream.Task = $null; continue }
+                    $null = $stream.Text.AppendLine($line)
+                    Write-Host $line
+                    $stream.Task = $stream.Reader.ReadLineAsync()
+                }
+            }
+            if ($finished) {
+                $finished = $process.WaitForExit([int][Math]::Max(0, 10000 - $timer.ElapsedMilliseconds))
+            }
+            $outputText = $streams[0].Text.ToString().TrimEnd()
+            $errorText = $streams[1].Text.ToString().TrimEnd()
+        }
+        else {
+            $outputTask = $process.StandardOutput.ReadToEndAsync()
+            $errorTask = $process.StandardError.ReadToEndAsync()
+            $finished = $process.WaitForExit(10000)
+        }
         if (-not $finished) {
             $process.Kill($true)
             $process.WaitForExit()
         }
-        $outputText = $outputTask.GetAwaiter().GetResult().TrimEnd()
-        $errorText = $errorTask.GetAwaiter().GetResult().TrimEnd()
+        if (-not $ShowOutput) {
+            $outputText = $outputTask.GetAwaiter().GetResult().TrimEnd()
+            $errorText = $errorTask.GetAwaiter().GetResult().TrimEnd()
+        }
         if (-not $finished) { $errorText = 'Git operation timed out after 10 seconds.' }
         [pscustomobject]@{
             ExitCode = $(if ($finished) { $process.ExitCode } else { 124 })
@@ -41,7 +78,7 @@ function Invoke-DotfilesGit {
 }
 
 function Get-DotfilesUpdateState {
-    param([string]$Repository)
+    param([string]$Repository, [switch]$ShowOutput)
 
     $main = Invoke-DotfilesGit $Repository @('rev-parse', '--verify', 'refs/heads/main')
     $upstream = Invoke-DotfilesGit $Repository @('rev-parse', '--symbolic-full-name', 'main@{upstream}')
@@ -51,7 +88,10 @@ function Get-DotfilesUpdateState {
         return [pscustomobject]@{ State = 'error'; Detail = 'main or its upstream is not configured.' }
     }
     if ($remote.Output -ne '.') {
-        $fetch = Invoke-DotfilesGit $Repository @('fetch', '--no-tags', '--no-write-fetch-head', '--', $remote.Output, "+$($merge.Output):$($upstream.Output)")
+        $fetchArguments = @('fetch', '--no-tags', '--no-write-fetch-head')
+        if ($ShowOutput) { $fetchArguments += '--verbose' }
+        $fetchArguments += @('--', $remote.Output, "+$($merge.Output):$($upstream.Output)")
+        $fetch = Invoke-DotfilesGit $Repository $fetchArguments -ShowOutput:$ShowOutput
         if ($fetch.ExitCode -ne 0) {
             return [pscustomobject]@{ State = 'error'; Detail = $fetch.Error }
         }
@@ -77,7 +117,7 @@ function Invoke-DotfilesUpdate {
     $lockPath = Join-Path $common.Output 'dotfiles-update.lock'
     $null = New-Item -ItemType Directory -Path $lockPath -ErrorAction Stop
     try {
-        $state = Get-DotfilesUpdateState $Repository
+        $state = Get-DotfilesUpdateState $Repository -ShowOutput
         if ($state.State -eq 'current') { return $false }
         if ($state.State -ne 'available') { throw "Cannot update main: $($state.State). $($state.Detail)" }
         $branch = Invoke-DotfilesGit $Repository @('symbolic-ref', '--quiet', 'HEAD')
@@ -86,17 +126,23 @@ function Invoke-DotfilesUpdate {
         if ($branch.Output -eq 'refs/heads/main') {
             $changes = Invoke-DotfilesGit $Repository @('status', '--porcelain', '--untracked-files=all', '--ignore-submodules=none')
             if ($changes.ExitCode -ne 0 -or $changes.Output) { throw 'Working tree is not clean; main was not updated.' }
-            $result = Invoke-DotfilesGit $Repository @('merge', '--ff-only', '--no-edit', $state.Target)
+            $result = Invoke-DotfilesGit $Repository @('merge', '--ff-only', '--no-edit', $state.Target) -ShowOutput
         }
         else {
             if (($worktrees.Output -split '\r?\n') -contains 'branch refs/heads/main') {
                 throw 'main is checked out in another worktree.'
             }
-            $result = Invoke-DotfilesGit $Repository @('update-ref', 'refs/heads/main', $state.Target, $state.Main)
+            Write-Host "dotfiles: updating main $($state.Main) -> $($state.Target)"
+            $result = Invoke-DotfilesGit $Repository @('update-ref', 'refs/heads/main', $state.Target, $state.Main) -ShowOutput
         }
         if ($result.ExitCode -ne 0) { throw $result.Error }
         Write-Host 'dotfiles: main updated.'
         return $true
     }
     finally { Remove-Item -LiteralPath $lockPath -Force }
+}
+
+if ($CheckRepository) {
+    try { Get-DotfilesUpdateState $CheckRepository | ConvertTo-Json -Compress }
+    catch { [pscustomobject]@{ State = 'error'; Detail = $_.Exception.Message } | ConvertTo-Json -Compress }
 }

@@ -14,18 +14,28 @@ _dotfiles_kill_tree() {
 
 _dotfiles_fetch() {
     local remote="$1" refspec="$2" result runner temporary ssh_command
+    local fetch_arguments=(fetch --no-tags --no-write-fetch-head)
     temporary=$(mktemp -d) || return 1
     ssh_command="${GIT_SSH_COMMAND:-ssh} -oBatchMode=yes -oConnectTimeout=10"
+    if [ "${DOTFILES_UPDATE_VERBOSE:-0}" = 1 ]; then
+        fetch_arguments+=(--verbose)
+    fi
     if IFS= read -r -t 10 result < <(
-        GIT_TERMINAL_PROMPT=0 SSH_ASKPASS_REQUIRE=never GIT_SSH_COMMAND="$ssh_command" \
-            _dotfiles_git -c core.askPass= -c credential.interactive=false \
-            fetch --no-tags --no-write-fetch-head -- "$remote" "$refspec" \
-            >"$temporary/output" 2>"$temporary/error"
+        if [ "${DOTFILES_UPDATE_VERBOSE:-0}" = 1 ]; then
+            GIT_TERMINAL_PROMPT=0 SSH_ASKPASS_REQUIRE=never GIT_SSH_COMMAND="$ssh_command" \
+                _dotfiles_git -c core.askPass= -c credential.interactive=false \
+                "${fetch_arguments[@]}" -- "$remote" "$refspec" >&2
+        else
+            GIT_TERMINAL_PROMPT=0 SSH_ASKPASS_REQUIRE=never GIT_SSH_COMMAND="$ssh_command" \
+                _dotfiles_git -c core.askPass= -c credential.interactive=false \
+                "${fetch_arguments[@]}" -- "$remote" "$refspec" \
+                >"$temporary/output" 2>"$temporary/error"
+        fi
         printf '%s\n' "$?"
     ); then
         runner=$!
         wait "$runner" 2>/dev/null || :
-        if [ "$result" != 0 ]; then cat "$temporary/error" >&2; fi
+        if [ "$result" != 0 ] && [ "${DOTFILES_UPDATE_VERBOSE:-0}" != 1 ]; then cat "$temporary/error" >&2; fi
     else
         runner=$!
         _dotfiles_kill_tree "$runner"
@@ -66,6 +76,7 @@ _dotfiles_check() {
 
 _dotfiles_update() {
     local common branch worktrees changes
+    DOTFILES_UPDATE_VERBOSE=1
     common=$(_dotfiles_git rev-parse --path-format=absolute --git-common-dir) || return 1
     DOTFILES_LOCK="$common/dotfiles-update.lock"
     if ! mkdir -- "$DOTFILES_LOCK" 2>/dev/null; then
@@ -98,6 +109,7 @@ _dotfiles_update() {
             printf '%s\n' 'dotfiles: main is checked out in another worktree.' >&2
             return 1
         fi
+        printf 'dotfiles: updating main %s -> %s\n' "$DOTFILES_MAIN" "$DOTFILES_TARGET"
         _dotfiles_git update-ref refs/heads/main "$DOTFILES_TARGET" "$DOTFILES_MAIN" || return 1
     fi
     printf '%s\n' 'dotfiles: main updated.'

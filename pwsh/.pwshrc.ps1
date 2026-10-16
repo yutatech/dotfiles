@@ -17,4 +17,4 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
     $PSStyle.FileInfo.SymbolicLink = "`e[36m"
 }
 
-. (Join-Path $env:DOTFILES_REPO_DIR 'pwsh\prompt.ps1')
+. (Join-Path $env:DOTFILES_REPO_DIR 'pwsh\prompt.ps1')              

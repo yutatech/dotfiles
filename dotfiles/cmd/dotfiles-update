@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ -z "${DOTFILES_REPO_DIR:-}" ]; then
+    DOTFILES_REPO_DIR=$(cd -- "$(dirname -- "$0")/../.." && pwd)
+    export DOTFILES_REPO_DIR
+fi
+exec bash "$DOTFILES_REPO_DIR/dotfiles/scripts/dotfiles_update.sh" update

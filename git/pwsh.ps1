@@ -36,20 +36,30 @@ function Test-DotfilesGitConfiguration {
     return $originPath -ieq [System.IO.Path]::GetFullPath($userGitConfig)
 }
 
-if ($global:DotfilesGitExecutable -and -not (Test-DotfilesGitConfiguration)) {
+if ($global:DotfilesGitExecutable) {
     function global:git {
-        Write-Host 'Git is not configured to use the dotfiles repository.'
-        $answer = Read-Host 'Run the Git setup script now? [y/N]'
-        if ($answer -notmatch '^(y|yes)$') { return }
-
-        $setupScript = Join-Path $env:DOTFILES_REPO_DIR 'git\scripts\setup_git.ps1'
-        & $setupScript
         if (-not (Test-DotfilesGitConfiguration)) {
-            Write-Error 'Git setup did not configure the dotfiles paths; git remains unavailable through this prompt.'
+            Write-Host 'Git is not configured to use the dotfiles repository.'
+            $answer = Read-Host 'Run the Git setup script now? [y/N]'
+            if ($answer -notmatch '^(y|yes)$') { return }
+
+            $setupScript = Join-Path $env:DOTFILES_REPO_DIR 'git\scripts\setup_git.ps1'
+            & $setupScript
+            if (-not (Test-DotfilesGitConfiguration)) {
+                Write-Error 'Git setup did not configure the dotfiles paths; git remains unavailable through this prompt.'
+                return
+            }
+        }
+
+        if ($args.Count -gt 0 -and $args[0] -in @('clear', 'fixup', 'graph')) {
+            $commandPath = Join-Path $env:DOTFILES_REPO_DIR "git\cmd\git-$($args[0]).ps1"
+            $commandArguments = @($args | Select-Object -Skip 1)
+            & $commandPath @commandArguments
             return
         }
 
-        Remove-Item Function:\git
         & $global:DotfilesGitExecutable.Source @args
     }
+
+    . (Join-Path $env:DOTFILES_REPO_DIR 'git\comp\git.ps1')
 }

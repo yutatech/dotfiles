@@ -160,5 +160,9 @@
     "C_Cpp.intelliSenseEngine": "disabled",
     "github.copilot.enable": {
         "*": true
-    }
+    },
+    "jupyter.widgetScriptSources": [
+        "jsdelivr.com",
+        "unpkg.com"
+    ]
 }

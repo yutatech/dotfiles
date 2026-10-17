@@ -107,3 +107,12 @@ case ${OSTYPE} in
         alias ls='ls -F --color=auto'
         ;;
 esac
+
+########################################
+# direnv_modoki
+typeset -f direnv >/dev/null
+if [[ $? -ne 0 ]]; then
+    # direnv が定義されていない場合に direnv_modoki を読み込む
+    CURRENT_SOURCE_DIR=$(cd -- "$(dirname -- "${(%):-%N}")" && pwd)
+    source "$CURRENT_SOURCE_DIR/direnv_modoki.zsh"
+fi

@@ -74,8 +74,54 @@ _dotfiles_check() {
     fi
 }
 
+_dotfiles_test_autostash() (
+    local temporary preview= snapshot path parent result
+    temporary=$(mktemp -d) || return 1
+    trap '
+        result=$?
+        if [ -n "$preview" ]; then
+            _dotfiles_git worktree remove --force "$preview" || result=1
+        fi
+        rm -f -- "$temporary/added" "$temporary/others"
+        rmdir -- "$temporary" || result=1
+        exit "$result"
+    ' EXIT
+    _dotfiles_git diff --no-renames --name-only -z --diff-filter=A "$DOTFILES_MAIN" "$DOTFILES_TARGET" >"$temporary/added" || return 1
+    while IFS= read -r -d '' path; do
+        if [ -e "$DOTFILES_REPO_DIR/$path" ] || [ -L "$DOTFILES_REPO_DIR/$path" ]; then
+            _dotfiles_git --literal-pathspecs ls-files --others -z -- "$path" >"$temporary/others" || return 1
+            if [ -s "$temporary/others" ]; then
+                printf 'dotfiles: untracked or ignored path would be overwritten: %s; main was not updated.\n' "$path" >&2
+                return 1
+            fi
+        fi
+        parent=${path%/*}
+        while [ "$parent" != "$path" ]; do
+            if { [ -e "$DOTFILES_REPO_DIR/$parent" ] || [ -L "$DOTFILES_REPO_DIR/$parent" ]; } &&
+                [ ! -d "$DOTFILES_REPO_DIR/$parent" ]; then
+                _dotfiles_git --literal-pathspecs ls-files --others -z -- "$parent" >"$temporary/others" || return 1
+                if [ -s "$temporary/others" ]; then
+                    printf 'dotfiles: untracked or ignored path blocks: %s; main was not updated.\n' "$path" >&2
+                    return 1
+                fi
+            fi
+            path=$parent
+            parent=${path%/*}
+        done
+    done <"$temporary/added"
+    # stash create leaves the index, worktree and stash list untouched.
+    snapshot=$(_dotfiles_git stash create) || return 1
+    [ -n "$snapshot" ] || return 0
+    _dotfiles_git worktree add --detach "$temporary/tree" "$DOTFILES_TARGET" || return 1
+    preview="$temporary/tree"
+    if ! command git -C "$preview" stash apply "$snapshot"; then
+        printf '%s\n' 'dotfiles: autostash would conflict; main, working tree, index and stash were not changed.' >&2
+        return 1
+    fi
+)
+
 _dotfiles_update() {
-    local common branch worktrees changes
+    local common branch worktrees
     DOTFILES_UPDATE_VERBOSE=1
     common=$(_dotfiles_git rev-parse --path-format=absolute --git-common-dir) || return 1
     DOTFILES_LOCK="$common/dotfiles-update.lock"
@@ -98,12 +144,8 @@ _dotfiles_update() {
     branch=$(_dotfiles_git symbolic-ref --quiet HEAD) || branch=
     worktrees=$(_dotfiles_git worktree list --porcelain) || return 1
     if [ "$branch" = refs/heads/main ]; then
-        changes=$(_dotfiles_git status --porcelain --untracked-files=all --ignore-submodules=none) || return 1
-        if [ -n "$changes" ]; then
-            printf '%s\n' 'dotfiles: working tree is not clean; main was not updated.' >&2
-            return 1
-        fi
-        _dotfiles_git merge --ff-only --no-edit "$DOTFILES_TARGET" || return 1
+        _dotfiles_test_autostash || return 1
+        _dotfiles_git merge --ff-only --autostash --no-overwrite-ignore --no-edit "$DOTFILES_TARGET" || return 1
     else
         if printf '%s\n' "$worktrees" | grep -Fx 'branch refs/heads/main' >/dev/null; then
             printf '%s\n' 'dotfiles: main is checked out in another worktree.' >&2

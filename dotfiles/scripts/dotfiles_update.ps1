@@ -109,6 +109,53 @@ function Get-DotfilesUpdateState {
     [pscustomobject]@{ State = $state; Detail = $fastForward.Error; Main = $main.Output; Target = $target.Output }
 }
 
+function Test-DotfilesAutostash {
+    param([string]$Repository, [string]$Main, [string]$Target)
+
+    $added = Invoke-DotfilesGit $Repository @('diff', '--no-renames', '--name-only', '-z', '--diff-filter=A', $Main, $Target)
+    if ($added.ExitCode -ne 0) { throw $added.Error }
+    foreach ($path in ($added.Output -split "`0" | Where-Object { $_ })) {
+        $fullPath = Join-Path $Repository $path
+        if (Test-Path -LiteralPath $fullPath) {
+            $untracked = Invoke-DotfilesGit $Repository @('--literal-pathspecs', 'ls-files', '--others', '-z', '--', $path)
+            if ($untracked.ExitCode -ne 0) { throw $untracked.Error }
+            if ($untracked.Output) { throw "Untracked or ignored path would be overwritten: $path; main was not updated." }
+        }
+        $parentPath = $path
+        while ($parentPath.Contains('/')) {
+            $parentPath = $parentPath.Substring(0, $parentPath.LastIndexOf('/'))
+            $parent = Join-Path $Repository $parentPath
+            if ((Test-Path -LiteralPath $parent) -and -not (Test-Path -LiteralPath $parent -PathType Container)) {
+                $untracked = Invoke-DotfilesGit $Repository @('--literal-pathspecs', 'ls-files', '--others', '-z', '--', $parentPath)
+                if ($untracked.ExitCode -ne 0) { throw $untracked.Error }
+                if ($untracked.Output) { throw "Untracked or ignored path blocks: $path; main was not updated." }
+            }
+        }
+    }
+
+    # stash create snapshots tracked changes without changing the index, worktree or stash list.
+    $snapshot = Invoke-DotfilesGit $Repository @('stash', 'create')
+    if ($snapshot.ExitCode -ne 0) { throw $snapshot.Error }
+    if (-not $snapshot.Output) { return }
+    $preview = Join-Path ([IO.Path]::GetTempPath()) "dotfiles-autostash-$([guid]::NewGuid().ToString('N'))"
+    $created = $false
+    try {
+        $result = Invoke-DotfilesGit $Repository @('worktree', 'add', '--detach', $preview, $Target)
+        if ($result.ExitCode -ne 0) { throw $result.Error }
+        $created = $true
+        $result = Invoke-DotfilesGit $preview @('stash', 'apply', $snapshot.Output)
+        if ($result.ExitCode -ne 0) {
+            throw "Autostash would conflict; main, working tree, index and stash were not changed. $($result.Output) $($result.Error)"
+        }
+    }
+    finally {
+        if ($created) {
+            $cleanup = Invoke-DotfilesGit $Repository @('worktree', 'remove', '--force', $preview)
+            if ($cleanup.ExitCode -ne 0) { throw "Cannot remove preview worktree ${preview}: $($cleanup.Error)" }
+        }
+    }
+}
+
 function Invoke-DotfilesUpdate {
     param([string]$Repository)
 
@@ -124,9 +171,8 @@ function Invoke-DotfilesUpdate {
         $worktrees = Invoke-DotfilesGit $Repository @('worktree', 'list', '--porcelain')
         if ($worktrees.ExitCode -ne 0) { throw $worktrees.Error }
         if ($branch.Output -eq 'refs/heads/main') {
-            $changes = Invoke-DotfilesGit $Repository @('status', '--porcelain', '--untracked-files=all', '--ignore-submodules=none')
-            if ($changes.ExitCode -ne 0 -or $changes.Output) { throw 'Working tree is not clean; main was not updated.' }
-            $result = Invoke-DotfilesGit $Repository @('merge', '--ff-only', '--no-edit', $state.Target) -ShowOutput
+            Test-DotfilesAutostash $Repository $state.Main $state.Target
+            $result = Invoke-DotfilesGit $Repository @('merge', '--ff-only', '--autostash', '--no-overwrite-ignore', '--no-edit', $state.Target) -ShowOutput
         }
         else {
             if (($worktrees.Output -split '\r?\n') -contains 'branch refs/heads/main') {

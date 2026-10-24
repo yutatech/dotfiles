@@ -16,8 +16,8 @@ function Test-DotfilesGitConfiguration {
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { return $false }
     }
 
-    if (-not (Test-DotfilesHardLink $userGitConfig $gitConfig)) { return $false }
-    if (-not (Test-DotfilesHardLink $userGlobalIgnore $globalIgnore)) { return $false }
+    if (-not (Test-DotfilesSymbolicLink $userGitConfig $gitConfig)) { return $false }
+    if (-not (Test-DotfilesSymbolicLink $userGlobalIgnore $globalIgnore)) { return $false }
 
     $gitExecutable = $global:DotfilesGitExecutable.Source
     $configuredIgnore = @(& $gitExecutable config --global --path core.excludesfile 2>$null)

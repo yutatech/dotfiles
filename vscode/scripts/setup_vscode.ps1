@@ -12,5 +12,5 @@ if (-not (Get-Command code -CommandType Application -ErrorAction SilentlyContinu
 
 $settingsPath = Join-Path $env:APPDATA 'Code\User\settings.json'
 $dotfilesSettingsPath = Join-Path $repoRoot 'vscode\settings.json'
-Set-DotfilesHardLink -LinkPath $settingsPath -TargetPath $dotfilesSettingsPath
+Set-DotfilesSymbolicLink -LinkPath $settingsPath -TargetPath $dotfilesSettingsPath
 Write-Host "VS Code settings now use the dotfiles file: $settingsPath"

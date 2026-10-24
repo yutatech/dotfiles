@@ -10,7 +10,7 @@ function Test-DotfilesVSCodeConfiguration {
 
     $settingsPath = Get-DotfilesVSCodeSettingsPath
     $dotfilesSettingsPath = Join-Path $env:DOTFILES_REPO_DIR 'vscode\settings.json'
-    return Test-DotfilesHardLink -LinkPath $settingsPath -TargetPath $dotfilesSettingsPath
+    return Test-DotfilesSymbolicLink -LinkPath $settingsPath -TargetPath $dotfilesSettingsPath
 }
 
 if ($global:DotfilesCodeExecutable -and -not (Test-DotfilesVSCodeConfiguration)) {
@@ -22,7 +22,7 @@ if ($global:DotfilesCodeExecutable -and -not (Test-DotfilesVSCodeConfiguration))
         $setupScript = Join-Path $env:DOTFILES_REPO_DIR 'vscode\scripts\setup_vscode.ps1'
         & $setupScript
         if (-not (Test-DotfilesVSCodeConfiguration)) {
-            Write-Error 'VS Code setup did not create the expected settings hard link; code remains unavailable through this prompt.'
+            Write-Error 'VS Code setup did not create the expected settings symbolic link; code remains unavailable through this prompt.'
             return
         }
 

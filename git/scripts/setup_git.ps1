@@ -18,6 +18,6 @@ if (-not (Get-Command git -CommandType Application -ErrorAction SilentlyContinue
     throw 'Git is not installed or is not available on PATH.'
 }
 
-Set-DotfilesHardLink -LinkPath $userGitConfig -TargetPath $gitConfig
-Set-DotfilesHardLink -LinkPath $userGlobalIgnore -TargetPath $globalIgnore
+Set-DotfilesSymbolicLink -LinkPath $userGitConfig -TargetPath $gitConfig
+Set-DotfilesSymbolicLink -LinkPath $userGlobalIgnore -TargetPath $globalIgnore
 Write-Host 'Git configuration now points to the dotfiles repository.'

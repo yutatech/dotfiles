@@ -12,7 +12,5 @@
 	ui = auto
 
 [include]
-	path = ~/dotfiles/git/.gitconfig-yutatech.conf
-
-# [includeIf "hasconfig:remote.*.url:git@gitlab.com:"]
-#     path = ~/dotfiles/git/.gitconfig-gitlab.conf
+	path = ~/dotfiles/git/config/.gitconfig-yutatech.conf
+	path = ~/dotfiles/git/config/.gitconfig-local.conf

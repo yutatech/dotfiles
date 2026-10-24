@@ -1,0 +1,1 @@
+$env:PATHEXT += ";.PY"

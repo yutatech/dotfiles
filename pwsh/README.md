@@ -35,6 +35,21 @@ Windows は Linux のシグナルをサポートしないため、`TERM` は通�
 Tab 補完では、`kill` に実行中プロセスの PID（プロセス名付き）、`pkill` に
 プロセス名、`-s` / `--signal` の後に対応シグナルを候補表示します。
 
+## ディスク使用量コマンド
+
+`bin` の `df` と `du` は GNU Coreutils でよく使うオプションを PowerShell で提供し、
+オプション、サイズ指定、パスを Tab 補完します。
+
+`df` は Windows の利用可能なボリュームを表示します。`-h` / `-H`、`-k` / `-m`、
+`-B SIZE`、`-T`、`-t TYPE`、`-x TYPE`、`--total` に対応します。`-a` と `-P` は
+Windows のボリューム一覧では表示結果を変えません。
+
+`du` はファイルの論理サイズを再帰集計し、`-a`、`-b`、`-B SIZE`、`-c`、`-d N`、
+`-h` / `-H`、`-k` / `-m`、`-s`、`-S`、`-x`、`--exclude PATTERN` に対応します。
+Windows では割当済みディスク容量やハードリンク数を取得せず、ディレクトリの
+シンボリックリンク/ジャンクションは辿りません。`--apparent-size` は既定の集計と
+同じ論理サイズを使います。これは GNU Coreutils の完全な互換実装ではありません。
+
 ## Documents
 
 [`create_document_symlink.ps1`](create_document_symlink.ps1) を手動実行すると、

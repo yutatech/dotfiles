@@ -23,3 +23,11 @@ applyTo: "**/*.py"
 - Remove functions, imports, constants, and branches that become unused after a refactor.
 - Preserve existing behavior and public command-line interfaces unless the requested change requires otherwise.
 - Validate all affected processing paths, including fallback or cached paths, after structural changes.
+
+# xlwings
+xlwingsのimportでCWDが変更されるため、必ずimport前のCWDを保存し、import後に復元すること。
+```python
+cwd = Path.cwd()
+import xlwings as xw
+os.chdir(cwd)
+```

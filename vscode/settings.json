@@ -99,6 +99,7 @@
         ".*python -m py_compile.*": true,
         "nocorrect": true,
         "/^Get-.*$/": true,
+        "/^Get-.*(?:\\s*(?:\\||\\|\\||&&|;)\\s*.*)*$/": true,
         "/^Get-.*\\|.*$/": true,
         "/^Select-.*/": true,
         "/^Select-.*\\|.*$/": true,
@@ -143,6 +144,9 @@
         "~/dotfiles/copilot/instructions": true
     },
     "chat.agent.enabled": true,
+    "chat.tools.eligibleForAutoApproval": {
+        "pylanceFileSyntaxErrors": true
+    },
     "scm.defaultViewMode": "tree",
     "accessibility.signals.terminalBell": {
         "sound": "on"

@@ -94,10 +94,9 @@
         "/^(gcc|g\\+\\+|clang|clang\\+\\+|python|python3|node|npm|pip|cargo|git|cmake|make|ninja)\\s+--version$/": true,
         "/^(pwd|whoami|uname|env|printenv|df|du|free|uptime|ps|top|htop|find|hostname|ipconfig|timeout|ping)(\\s+.*)?$/": true,
         "npm run build": true,
-        ".*python -c.*": true,
-        ".*python.exe -c.*": true,
-        ".*python -m py_compile.*": true,
-        "nocorrect": true,
+        "/.*python(?:\\.exe)? -c.*/": true,
+        "/.*python(?:\\.exe)? -m (py_compile|unittest).*/": true,
+        "/^nocorrect/": true,
         "/^Get-.*$/": true,
         "/^Get-.*(?:\\s*(?:\\||\\|\\||&&|;)\\s*.*)*$/": true,
         "/^Get-.*\\|.*$/": true,
@@ -109,20 +108,20 @@
         "/^Sort-.*\\|.*$/": true,
         "/^Measure-.*/": true,
         "/^Measure-.*\\|.*$/": true,
-        "Get-CimInstance": true,
-        "ForEach-Object": true,
-        "Format-List": true,
-        "Select-String": true,
-        "Select-Object": true,
-        "Test-Path": true,
-        "Resolve-Path": true,
-        "where.exe": true,
-        "tasklist": true,
+        "/^Get-CimInstance/": true,
+        "/^ForEach-Object/": true,
+        "/^Format-List/": true,
+        "/^Select-String/": true,
+        "/^Select-Object/": true,
+        "/^Test-Path/": true,
+        "/^Resolve-Path/": true,
+        "/^where.exe/": true,
+        "/^tasklist/": true,
         "/^node --check .*/": true,
         "/^node -e .*/": true,
-        "command": true,
-        "rsvg-convert": true,
-        "sips": true
+        "/^command/": true,
+        "/^rsvg-convert/": true,
+        "/^sips/": true
     },
     "chat.tools.urls.autoApprove": {
         "*": true
@@ -139,7 +138,6 @@
             "text": "write in english"
         }
     ],
-    "chat.viewSessions.orientation": "stacked",
     "chat.instructionsFilesLocations": {
         "~/dotfiles/copilot/instructions": true
     },

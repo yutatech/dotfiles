@@ -145,6 +145,7 @@
     "chat.tools.eligibleForAutoApproval": {
         "pylanceFileSyntaxErrors": true
     },
+    "chat.tools.global.autoApprove": true,
     "scm.defaultViewMode": "tree",
     "accessibility.signals.terminalBell": {
         "sound": "on"

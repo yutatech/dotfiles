@@ -167,5 +167,8 @@
     "jupyter.widgetScriptSources": [
         "jsdelivr.com",
         "unpkg.com"
-    ]
+    ],
+    "chat.defaultConfiguration": {
+        "approvals": "allowAll"
+    }
 }
